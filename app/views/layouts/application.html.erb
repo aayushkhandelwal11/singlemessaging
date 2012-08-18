@@ -1,0 +1,41 @@
+
+<!-- START:head -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vinsol Messenger</title>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tag %>
+</head>
+<!-- END:head -->
+<body class="<%= controller.controller_name %>">
+  <div id="banner">
+    <%= image_tag("vinsol.jpg") %>
+    <%= @page_title || "Vinsol Messenger" %>
+   <div id="user"> Welcome
+   <% if session[:user_id]!=nil %> 
+   <%= (User.find session[:user_id]).name%>
+   <%else%>
+   Guest
+   <%end%>
+   </div>
+  </div>
+  <div id="columns">
+    <div id="side">
+      <ul>
+        <% if session[:user_id]==nil %> 
+        <li><%= link_to 'New user', new_user_path %></li>
+        <% else %>
+        <li><%= link_to 'Home', mes_url %></li>
+        <li><%= link_to 'Log Out',logout_url,:method=>:delete%></li>
+        <%end%>
+      </ul>
+    </div>
+    <div id="main">
+      <%= yield %>
+    </div>
+  </div>
+</body>
+</html>
+

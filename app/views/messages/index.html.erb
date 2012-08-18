@@ -1,0 +1,31 @@
+<h1>Listing messages</h1>
+
+<table>
+  <tr>
+    <th>To user</th>
+    <th>From user</th>
+    <th> Date</th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @messages.each do |message| %>
+   <% if message.threadmessages.where("status='u'").count>0 %> 
+    <tr class="unread">
+   <% else %>
+    <tr class="read">
+   <%end%> 
+    <td><%= message.to_user.name %></td>
+    <td><%= message.from_user.name %></td>
+    <td><%= message.updated_at.ctime %></td>
+    <td><%= link_to 'show', message %></td>
+    <td><%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+
+    
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Message', new_message_path %>

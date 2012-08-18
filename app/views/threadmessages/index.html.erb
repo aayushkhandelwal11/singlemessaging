@@ -1,0 +1,32 @@
+<h1>Listing threadmessages</h1>
+
+<table>
+  <tr>
+    <th>Description</th>
+    <th>From user</th>
+    <th>Status</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @threadmessages.each do |threadmessage| %>
+  <%if  threadmessage.status=="u" %>
+  <tr class="unread">
+  <% else %>
+  <tr class="read">
+  <%end%>
+    <td><%= threadmessage.description %></td>
+    <td><%= threadmessage.user.name %></td>
+    <td><%= threadmessage.updated_at %></td>    
+    <td><%= link_to 'Show', threadmessage %></td>
+
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'Reply', new_threadmessage_path %>
+<p><%= will_paginate @threadmessages %></p>
+

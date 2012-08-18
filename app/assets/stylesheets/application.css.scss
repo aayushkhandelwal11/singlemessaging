@@ -1,0 +1,106 @@
+#banner {
+  background:  #8d3c89;
+  padding: 10px;
+  border-bottom: 2px solid;
+  font: small-caps 40px/40px "Times New Roman", serif;
+  color: white;
+  text-align: center;
+
+  img {
+		height:45px;
+    float:left;
+		
+  }
+  #user
+  {
+  font: bold small sans-serif;
+  float: right;
+ 
+  }
+}
+
+#notice {
+  color: #000 !important;
+  border: 2px solid red;
+  padding: 1em;
+  margin-bottom: 2em;
+  background-color: #f0f0f0;
+  font: bold smaller sans-serif;
+}
+
+#columns {
+  background: #8d3c89;
+
+  #main {
+    margin-left: 17em;
+    padding: 1em;
+    background: white;
+  }
+
+//#START:side
+  #side {
+    float: left;
+    padding: 1em 2em;
+    width: 13em;
+    background:  #8d3c89;
+
+    ul {
+      padding: 0;
+
+      li {
+        list-style: none;
+
+        a {
+          color: white;
+          font-size: large;
+        }
+      }
+    }
+  }
+}
+.depot_form {
+  fieldset {
+    background: #6cd2d7;
+
+    legend {
+      color: #dfd;
+      background: #800080;
+      font-family: sans-serif;
+      padding: 0.2em 1em;
+    }
+  }
+
+  form {
+    label {
+      width: 5em;
+      float: left;
+      text-align: right;
+      padding-top: 0.2em;
+      margin-right: 0.1em;
+      display: block;
+    }
+
+    select, textarea, input {
+      margin-left: 0.5em;
+    }
+
+    .submit {
+      margin-left: 4em;
+    }
+
+    br {
+      display: none
+    }
+  }
+}
+.mm {
+margin-left: 13em;
+}
+tr.read
+{
+	background:green;
+}
+tr.unread
+{
+	background:red;
+}
