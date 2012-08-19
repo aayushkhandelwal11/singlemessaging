@@ -3,12 +3,14 @@ class UsersController < ApplicationController
   # GET /users.json
   skip_before_filter :authorize, only: [:create,:new]
   def index
-    @users = User.all
+    redirect_to mes_url
+    #@users = User.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @users }
-    end
+    #respond_to do |format|
+     
+     # format.html # index.html.erb
+      #format.json { render json: @users }
+    #end
   end
 
   # GET /users/1

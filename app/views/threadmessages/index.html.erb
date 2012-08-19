@@ -1,5 +1,10 @@
 <h1>Listing threadmessages</h1>
-
+<%= paginate @threadmessages %>
+<% if (Message.find session[:message_id]).to_user_id ==session[:message_id]%>
+<%= image_tag (Message.find session[:message_id]).to_user.avatar.url(:small) %>
+<% else %>
+<%= image_tag (Message.find session[:message_id]).from_user.avatar.url(:small) %>
+<% end %>
 <table>
   <tr>
     <th>Description</th>
@@ -28,5 +33,5 @@
 <br />
 
 <%= link_to 'Reply', new_threadmessage_path %>
-<p><%= will_paginate @threadmessages %></p>
+
 

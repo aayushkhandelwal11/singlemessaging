@@ -2,8 +2,7 @@ class ThreadmessagesController < ApplicationController
   # GET /threadmessages
   # GET /threadmessages.json
   def index
-    @threadmessages = Threadmessage.includes(:user).order("updated_at DESC").find_all_by_message_id(session[:message_id])
-
+    @threadmessages = Kaminari.paginate_array(Threadmessage.includes(:user).order("updated_at DESC").find_all_by_message_id(session[:message_id])).page(params[:page]).per(10)
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @threadmessages }

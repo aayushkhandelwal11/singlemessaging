@@ -2,7 +2,7 @@ class MessagesController < ApplicationController
   # GET /messages
   # GET /messages.json
   def index
-    @messages = Message.includes(:to_user,:from_user,:threadmessages).order('updated_at DESC').find(:all,:conditions => ['(to_user_id=? and status in ("b","s")) or (from_user_id=? and status in ("b","r"))',session[:user_id],session[:user_id]])
+    @messages = Kaminari.paginate_array(Message.includes(:to_user,:from_user,:threadmessages).order('updated_at DESC').find(:all,:conditions => ['(to_user_id=? and status in ("b","s")) or (from_user_id=? and status in ("b","r"))',session[:user_id],session[:user_id]])).page(params[:page]).per(10)
 
     respond_to do |format|
       format.html # index.html.erb

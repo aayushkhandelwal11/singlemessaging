@@ -1,5 +1,6 @@
 <p id="notice"><%= notice %></p>
-
+Send by:-<br>
+<%= image_tag @threadmessage.user.avatar.url(:small) %>
 <p>
   <b>Description:</b>
   <%= @threadmessage.description %>
