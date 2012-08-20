@@ -42,17 +42,23 @@ class ThreadmessagesController < ApplicationController
   # POST /threadmessages
   # POST /threadmessages.json
   def create
-    @threadmessage = Threadmessage.new(params[:threadmessage])
-    @threadmessage.status='u'
-    @threadmessage.user=User.find session[:user_id]
-    @threadmessage.message=Message.find session[:message_id]
-    
-    respond_to do |format|
+    counter=0;
+    array_of_id=session[:list_users]
+    array_of_id.each do |messageid|
+      @threadmessage = Threadmessage.new(params[:threadmessage])
+      @threadmessage.status='u'
+      @threadmessage.user=User.find session[:user_id]
+      @threadmessage.message=Message.find messageid
       if @threadmessage.save
-         m=Message.find session[:message_id]
+         m=Message.find messageid
          m.updated_at=@threadmessage.updated_at
          m.save
-        format.html { redirect_to action: "index", notice: 'Threadmessage was successfully created.' }
+         counter=1
+      end   
+    end     
+    respond_to do |format|
+      if counter==1
+        format.html { redirect_to mes_url, notice: 'Threadmessage was successfully created.' }
         format.json { render json: @threadmessage, status: :created, location: @threadmessage }
       else
         format.html { render action: "new" }

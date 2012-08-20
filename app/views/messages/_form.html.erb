@@ -1,3 +1,4 @@
+<%#= javascript_include_tag "messagestore.js"  %>
 <%= form_for(@message) do |f| %>
   <% if @message.errors.any? %>
     <div id="error_explanation">
@@ -12,7 +13,9 @@
   <% end %>
 
   <div class="field">
-    <%= f.collection_select(:to_user_id, User.where('id !=?',session[:user_id]), :id, :name) %>
+    <%= f.autocomplete_field :to_user_id , autocomplete_user_name_users_path ,:"data-delimiter" => ';'%>
+    <%= f.hidden_field :service, :value => :to_user_id %>
+    
   </div>
   <div class="actions">
     <%= f.submit %>

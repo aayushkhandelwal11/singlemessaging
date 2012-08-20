@@ -12,8 +12,20 @@ Singlemessaging::Application.routes.draw do
   resources :threadmessages
 
   resources :messages
-
-  resources :users
+  #match 'users/change_avatar' => 'users#change_avatar',:via => "put"
+  #match.resources :users, :member => { :change_avatar => :get }
+  #match '/users/change_avatar', :controller => 'users', :action => 'change_avatar', :method => 'put'
+  match "/change_avatar" => "users#change_avatar", :as => "change_avatar",:via => "get"
+   match "/update_picture" => "users#update_picture", :as => "update_picture",:via => "put"
+  resources :users do
+   #collection do
+      #put "change_avatar"
+    #end
+     #put :change_avatar,:on => :collection
+     #put :update_picture,:on => :collection,:as=>"update_picture"
+     get :autocomplete_user_name,:on => :collection
+  end
+  
 	controller :sessions do
 		get 'login' => :new
 		post 'login' => :create

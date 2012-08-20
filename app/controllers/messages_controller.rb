@@ -1,6 +1,7 @@
 class MessagesController < ApplicationController
   # GET /messages
   # GET /messages.json
+  autocomplete :user, :name
   def index
     @messages = Kaminari.paginate_array(Message.includes(:to_user,:from_user,:threadmessages).order('updated_at DESC').find(:all,:conditions => ['(to_user_id=? and status in ("b","s")) or (from_user_id=? and status in ("b","r"))',session[:user_id],session[:user_id]])).page(params[:page]).per(10)
 
@@ -42,14 +43,21 @@ class MessagesController < ApplicationController
   # POST /messages
   # POST /messages.json
   def create
-    @message = Message.new(params[:message])
-    @message.status='b'
-    @message.from_user=User.find session[:user_id]
-
-   
+    array_of_id=[]
+    array_of_user=params[:message][:to_user_id].split(";")
+    array_of_user.each do |num|
+      @message = Message.new
+      @message.status='b'
+      @message.from_user=User.find session[:user_id]
+      u=User.find_by_name(num)
+      @message.to_user=u
+      @message.save
+      array_of_id.push(@message.id)
+    end
+    #@message.to_user_id=u.id
      respond_to do |format|
       if @message.save
-        session[:message_id]=@message.id
+        session[:list_users]=array_of_id
         format.html { redirect_to new_threadmessage_path, notice: 'Message was successfully created. from #{params[:to_user]}' }
         format.json { render json: @message, status: :created, location: @message }
       else

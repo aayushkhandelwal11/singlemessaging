@@ -28,14 +28,15 @@ gem 'jquery-rails'
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
 
-# Use unicorn as the app server
-# gem 'unicorn'
 
-# Deploy with Capistrano
-# gem 'capistrano'
 
 # To use debugger
 # gem 'debugger'
+gem "unicorn"
 
+group :development do
+  gem "capistrano"
+end
+gem "rails3-jquery-autocomplete", "~> 1.0.7"
 gem 'paperclip', :git => 'git://github.com/thoughtbot/paperclip.git'
 gem 'kaminari'

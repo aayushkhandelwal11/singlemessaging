@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   skip_before_filter :authorize, only: [:create,:new]
+  autocomplete :user, :name
   def index
     redirect_to mes_url
     #@users = User.all
@@ -12,7 +13,10 @@ class UsersController < ApplicationController
       #format.json { render json: @users }
     #end
   end
-
+  def change_avatar
+    @user = User.find(session[:user_id])
+  end
+  
   # GET /users/1
   # GET /users/1.json
   def show
@@ -55,7 +59,22 @@ class UsersController < ApplicationController
       end
     end
   end
-
+  
+  
+  def update_picture
+   @user = User.find(session[:user_id])
+   @user.avatar=params[:avatar]
+    respond_to do |format|
+      if @user.save
+        format.html { redirect_to users_url,notice: "User #{@user.name} was successfully updated." }
+        format.json { head :no_content }
+      else
+        format.html { render action: "change_avatar" }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
   # PUT /users/1
   # PUT /users/1.json
   def update
@@ -64,7 +83,6 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.update_attributes(params[:user])
         format.html { redirect_to users_url,notice: "User #{@user.name} was successfully updated." }
-
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
