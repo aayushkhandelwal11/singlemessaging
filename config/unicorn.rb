@@ -8,25 +8,26 @@ worker_processes 4
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
-listen "/tmp/50.56.70.107.socket", :backlog => 64
+listen "/tmp/singlemessaging.socket", :backlog => 64
 
 # Preload our app for more speed
 preload_app true
 
-# nuke workers after 30 seconds instead of 60 seconds (the default)
+# nuke workers after 30 seconds instead of 60 seconds (the default)`send_data': cannot send data if channel has declared eof (EOFError)
+
 timeout 30
 
-pid "/tmp/unicorn.50.56.70.107.pid"
+pid "/tmp/unicorn.singlemessaging.pid"
 
 # Production specific settings
 if env == "production"
   # Help ensure your application will always spawn in the symlinked
   # "current" directory that Capistrano sets up.
-  working_directory "/home/deployer/apps/50.56.70.107/current"
+  working_directory "/home/aayush/apps/singlemessaging/current"
 
   # feel free to point this anywhere accessible on the filesystem
-  user 'deployer', 'staff'
-  shared_path = "/home/deployer/apps/50.56.70.107/shared"
+  user 'aayush', 'staff'
+  shared_path = "/home/aayush/apps/singlemessaging/shared"
 
   stderr_path "#{shared_path}/log/unicorn.stderr.log"
   stdout_path "#{shared_path}/log/unicorn.stdout.log"
@@ -41,7 +42,7 @@ before_fork do |server, worker|
 
   # Before forking, kill the master process that belongs to the .oldbin PID.
   # This enables 0 downtime deploys.
-  old_pid = "/tmp/unicorn.50.56.70.107.pid.oldbin"
+  old_pid = "/tmp/unicorn.singlemessaging.pid.oldbin"
   if File.exists?(old_pid) && server.pid != old_pid
     begin
       Process.kill("QUIT", File.read(old_pid).to_i)
