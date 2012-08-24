@@ -50,20 +50,20 @@ namespace :deploy do
    run "cp #{shared_path}/config/database.yml #{current_path}/config/database.yml"
    run "bundle install"
  end
-  desc "Zero-downtime restart of Unicorn"
-  task :restart, :except => { :no_release => true } do
-    run "kill -9 USR2 `cat /tmp/unicorn.singlemessaging.pid`"
-  end
+  #desc "Zero-downtime restart of Unicorn"
+  #task :restart, :except => { :no_release => true } do
+   # run "kill -9 USR2 `cat /tmp/unicorn.singlemessaging.pid`"
+  #end
 
-  desc "Start unicorn"
-  task :start, :except => { :no_release => true } do
-    run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
-  end
+  #desc "Start unicorn"
+  #task :start, :except => { :no_release => true } do
+   # run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+  #end
 
-  desc "Stop unicorn"
-  task :stop, :except => { :no_release => true } do
-    run "kill -9 QUIT `cat /tmp/unicorn.singlemessaging.pid`"
-  end  
+  #desc "Stop unicorn"
+  #task :stop, :except => { :no_release => true } do
+   # run "kill -9 QUIT `cat /tmp/unicorn.singlemessaging.pid`"
+  #end  
  desc "Deploy with migrations"
  task :long do
    transaction do
