@@ -23,11 +23,11 @@ pid "/tmp/unicorn.singlemessaging.pid"
 if env == "production"
   # Help ensure your application will always spawn in the symlinked
   # "current" directory that Capistrano sets up.
-  working_directory "/home/aayush/apps/singlemessaging/current"
+  working_directory "/var/www/singlemessaging/current"
 
   # feel free to point this anywhere accessible on the filesystem
   user 'aayush', 'staff'
-  shared_path = "/home/aayush/apps/singlemessaging/shared"
+  shared_path = "/var/www/singlemessaging/shared"
 
   stderr_path "#{shared_path}/log/unicorn.stderr.log"
   stdout_path "#{shared_path}/log/unicorn.stdout.log"
@@ -44,11 +44,11 @@ before_fork do |server, worker|
   # This enables 0 downtime deploys.
   old_pid = "/tmp/unicorn.singlemessaging.pid.oldbin"
   if File.exists?(old_pid) && server.pid != old_pid
-    begin
-      Process.kill("QUIT", File.read(old_pid).to_i)
-    rescue Errno::ENOENT, Errno::ESRCH
-      # someone else did our job for us
-    end
+  begin
+       Process.kill("QUIT", File.read(old_pid).to_i)
+       rescue Errno::ENOENT, Errno::ESRCH
+        # someone else did our job for us
+       end
   end
 end
 
@@ -64,3 +64,4 @@ after_fork do |server, worker|
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
 end
+
