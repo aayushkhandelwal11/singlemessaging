@@ -15,9 +15,8 @@ class MessagesController < ApplicationController
   # GET /threadmessages
   def show
     session[:message_id]=params[:id]
-    @message = Message.find(params[:id])
-    session[:list_users]= session[:user_id] != @message.to_user_id ? @message.to_user_id : @message.from_user_id
-    
+    session[:list_users]=[params[:id]]
+       
     redirect_to threadmessages_url
    
      
