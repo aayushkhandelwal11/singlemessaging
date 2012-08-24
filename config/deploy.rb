@@ -49,6 +49,23 @@ namespace :deploy do
    run "cp #{shared_path}/config/database.yml #{current_path}/config/database.yml"
    run "bundle install"
  end
+  desc "Zero-downtime restart of Unicorn"
+  task :restart, :except => { :no_release => true } do
+    run "kill -s USR2 `cat /tmp/unicorn.singlemessaging.pid`"
+  end
+
+  desc "Start unicorn"
+  task :start, :except => { :no_release => true } do
+    run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+  end
+
+  desc "Stop unicorn"
+  task :stop, :except => { :no_release => true } do
+    run "kill -s QUIT `cat /tmp/unicorn.singlemessaging.pid`"
+  end  
+
+
+
  desc "Deploy with migrations"
  task :long do
    transaction do
@@ -67,7 +84,7 @@ namespace :deploy do
     run "cd #{current_path}; git fetch origin; git reset --hard #{branch}"
     finalize_update
   end
-
+  
   desc "Update the database (overwritten to avoid symlink)"
   task :migrations do
     transaction do
