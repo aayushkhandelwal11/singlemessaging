@@ -63,9 +63,8 @@ class UsersController < ApplicationController
   
   def update_picture
    @user = User.find(session[:user_id])
-   @user.avatar=params[:avatar]
     respond_to do |format|
-      if @user.save
+       if @user.update_attributes(params[:user])
         format.html { redirect_to users_url,notice: "User #{@user.name} was successfully updated." }
         format.json { head :no_content }
       else

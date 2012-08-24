@@ -15,8 +15,11 @@ class MessagesController < ApplicationController
   # GET /threadmessages
   def show
     session[:message_id]=params[:id]
-    redirect_to threadmessages_url
     @message = Message.find(params[:id])
+    session[:list_users]= session[:user_id] != @message.to_user_id ? @message.to_user_id : @message.from_user_id
+    
+    redirect_to threadmessages_url
+   
      
     #respond_to do |format|
      # format.html # show.html.erb
@@ -28,7 +31,7 @@ class MessagesController < ApplicationController
   # GET /messages/new.json
   def new
     @message = Message.new
-
+    
     respond_to do |format|
       format.html # new.html.erb
       format.json { render json: @message }

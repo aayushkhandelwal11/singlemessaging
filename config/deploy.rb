@@ -63,9 +63,6 @@ namespace :deploy do
   #task :stop, :except => { :no_release => true } do
    # run "kill -s QUIT `cat /tmp/unicorn.singlemessaging.pid`"
   #end  
-
-
-
  desc "Deploy with migrations"
  task :long do
    transaction do
