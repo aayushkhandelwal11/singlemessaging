@@ -29,7 +29,7 @@ gem 'jquery-rails'
 # gem 'jbuilder'
 
 
-gem "execjs"
+
 # To use debugger
 # gem 'debugger'
 gem "unicorn"
