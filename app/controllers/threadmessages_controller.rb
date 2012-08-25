@@ -48,6 +48,15 @@ class ThreadmessagesController < ApplicationController
       if @threadmessage.save
          m=Message.find messageid
          m.updated_at=@threadmessage.updated_at
+         
+         if @threadmessage.user != m.to_user
+             user_send=m.to_user   
+         else
+            user_send=m.from_user
+         end
+         if user_send.notification == "1"
+           Notifier.gmail_message(@threadmessage.user,user_send).deliver   
+         end
          m.save
          counter=1
       end   

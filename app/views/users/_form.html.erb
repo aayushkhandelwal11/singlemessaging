@@ -2,36 +2,42 @@
 <%= form_for @user,:html => { :multipart => true}  do |f| %>
 <fieldset>
 <legend>Enter User Details</legend>
+<table>
+<tr>
+<td><%= f.label :name %></td>
+<% if @user.errors[:name].any? %><td class="error"><% else %><td><% end %><%= f.text_field :name, size: 40 %></td>
+<td><% if @user.errors[:name].any? %><div id="error"><%= @user.errors.get(:name) %></div><% end %></td>
+</tr>
+<tr>
+<td><%= f.label :email %></td>
+<% if @user.errors[:email].any? %><td class="error"><% else %><td><% end %><%= f.email_field :email, size: 40 %></td>
+<td><% if @user.errors[:email].any? %><div id="error"><%= @user.errors.get(:email) %></div><% end %></td>
+</tr>
+<tr>
+<td><%= f.label :age %></td>
+<% if @user.errors[:age].any? %><td class="error"><% else %><td><% end %><%= f.text_field :age, size: 40 %></td>
+<td><% if @user.errors[:age].any? %><div id="error"><%= @user.errors.get(:age) %></div><% end %></td>
+</tr>
+<tr>
+<td><%= f.label :avatar%></td>
+<% if @user.errors[:avatar].any? %><td class="error"><% else %><td><% end %><%= f.file_field :avatar %></td>
+<td><% if @user.errors[:avatar].any? %><div id="error"><%= @user.errors.get(:avatar) %></div><% end %></td>
+</tr>
+<tr>
+<td><%= f.label :password, 'Password' %></td>
+<% if @user.errors[:password].any? %><td class="error"><% else %><td><% end %><%= f.password_field :password, size: 40 %></td>
+<td><% if @user.errors[:password].any? %><div id="error"><%= @user.errors.get(:password) %></div><% end %></td>
+</tr>
+<tr>
+<td><%= f.label :password_confirmation, 'Confirm' %>:</td>
+<% if @user.errors[:password_confirmation].any? %><td class="error"><% else %><td><% end %><%= f.password_field :password_confirmation, size: 40 %></td>
+<td><% if @user.errors[:password_confirmation].any? %><div id="error"><%= @user.errors.get(:password_confirmation) %></div><% end %></td>
+</tr>
 
-<div>
-<%= f.label :name %>:
-<%= f.text_field :name, size: 40 %>
-<% if @user.errors[:name].any? %><div id="error"><%= @user.errors.get(:name) %></div><% end %>
-</div>
-<div>
-<%= f.label :email %>:
-<%= f.email_field :email, size: 40 %>
-<% if @user.errors[:email].any? %><div id="error"><%= @user.errors.get(:email) %></div><% end %>
-</div>
-<div>
-<%= f.label :age %>:
-<%= f.text_field :age, size: 40 %>
-<% if @user.errors[:age].any? %><div id="error"><%= @user.errors.get(:age) %></div><% end %>
-</div>
-<div>
-<%= f.file_field :avatar %>
-<% if @user.errors[:avatar].any? %><div id="error"><%= @user.errors.get(:avatar) %></div><% end %>
-</div>
-<div>
-<%= f.label :password, 'Password' %>:
-<%= f.password_field :password, size: 40 %>
-<% if @user.errors[:password].any? %><div id="error"><%= @user.errors.get(:password) %></div><% end %>
-</div>
-<div>
-<%= f.label :password_confirmation, 'Confirm' %>:
-<%= f.password_field :password_confirmation, size: 40 %>
-<% if @user.errors[:password_confirmation].any? %><div id="error"><%= @user.errors.get(:password_confirmation) %></div><% end %>
-</div>
+</table>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box :notification %> Check To receive notifications from site
 <div>
 <%= f.submit %>
 </div>

@@ -1,29 +1,23 @@
 <div class="depot_form">
 <%= form_for @user do |f| %>
-<% if @user.errors.any? %>
-<div id="error_explanation">
-<h2><%= pluralize(@user.errors.count, "error") %>
-prohibited this user from being saved:</h2>
-<ul>
-<% @user.errors.full_messages.each do |msg| %>
-<li><%= msg %></li>
-<% end %>
-</ul>
-</div>
-<% end %>
 <fieldset>
 <legend>Enter New Password</legend>
-<div>
-<%= f.label :password, 'NewPassword' %>:
-<%= f.password_field :password, size: 40 %>
-</div>
-<div>
-<%= f.label :password_confirmation, 'Confirm' %>:
-<%= f.password_field :password_confirmation, size: 40 %>
-</div>
+<table>
+<tr>
+<td><%= f.label :password, 'Password' %></td>
+<% if @user.errors[:password].any? %><td class="error"><% else %><td><% end %><%= f.password_field :password, size: 40 %></td>
+<td><% if @user.errors[:password].any? %><div id="error"><%= @user.errors.get(:password) %></div><% end %></td>
+</tr>
+<tr>
+<td><%= f.label :password_confirmation, 'Confirm' %>:</td>
+<% if @user.errors[:password_confirmation].any? %><td class="error"><% else %><td><% end %><%= f.password_field :password_confirmation, size: 40 %></td>
+<td><% if @user.errors[:password_confirmation].any? %><div id="error"><%= @user.errors.get(:password_confirmation) %></div><% end %></td>
+</tr>
+<table>
 <div>
 <%= f.submit %>
 </div>
+
 </fieldset>
 <% end %>
 </div>

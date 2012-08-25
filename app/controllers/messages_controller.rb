@@ -50,6 +50,7 @@ class MessagesController < ApplicationController
       @message.to_user=u
       @message.save
       array_of_id.push(@message.id)
+      
     end
     #@message.to_user_id=u.id
      respond_to do |format|

@@ -34,4 +34,14 @@ Singlemessaging::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+  config.action_mailer.delivery_method= :smtp
+  config.action_mailer.smtp_settings = {
+   :enable_starttls_auto => true,
+   :address => 'smtp.gmail.com',
+   :port => 587,
+   :authentication => :plain,
+   :domain =>"aayushmessaging.vinsol.com",
+   :user_name => 'aayush8104726it@gmail.com',
+   :password => '20315400'
+   }
 end

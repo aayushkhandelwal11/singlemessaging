@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   
-  attr_accessible :age, :email, :name,:password,:password_confirmation,:avatar
+  attr_accessible :age, :email, :name,:password,:password_confirmation,:avatar,:notification
   has_many:messages,:dependent => :destroy
   has_many:threadmessages,:dependent => :destroy
   validates_attachment :avatar, :presence => true

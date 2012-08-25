@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120819091658) do
+ActiveRecord::Schema.define(:version => 20120825103528) do
 
   create_table "messages", :force => true do |t|
     t.string   "status"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20120819091658) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.string   "notification"
   end
 
 end
