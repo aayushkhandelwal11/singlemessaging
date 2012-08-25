@@ -16,7 +16,9 @@ Singlemessaging::Application.routes.draw do
   #match.resources :users, :member => { :change_avatar => :get }
   #match '/users/change_avatar', :controller => 'users', :action => 'change_avatar', :method => 'put'
   match "/change_avatar" => "users#change_avatar", :as => "change_avatar",:via => "get"
-   match "/update_picture" => "users#update_picture", :as => "update_picture",:via => "put"
+  match "/update_picture" => "users#update_picture", :as => "update_picture",:via => "put"
+  match "/change_notification" => "users#change_notification", :as => "change_notification",:via => "get"
+  match "/update_notification" => "users#update_notification", :as => "update_notification",:via => "put"
   resources :users do
    #collection do
       #put "change_avatar"

@@ -1,22 +1,18 @@
+<% if notice !=nil %>
+<p id="notice"><%= notice %></p>
+<%end%>
 <h1>Update picture</h1>
 <div class="depot_form">
-<%= form_for @user,:html => { :multipart => true},:url => update_picture_url do |f| %>
-<% if @user.errors.any? %>
-<div id="error_explanation">
-<h2><%= pluralize(@user.errors.count, "error") %>
-prohibited this user from being saved:</h2>
-<ul>
-<% @user.errors.full_messages.each do |msg| %>
-<li><%= msg %></li>
-<% end %>
-</ul>
-</div>
-<% end %>
+<%= form_for @user,:html => { :multipart => true}  ,:url => update_picture_url do |f| %>
 <fieldset>
 <legend>Update New picture</legend>
-<div>
-<%= f.file_field :avatar %>
-</div>
+<table>
+<tr>
+<td><%= f.label :avatar%></td>
+<% if @user.errors[:avatar].any? %><td class="error"><% else %><td><% end %><%= f.file_field :avatar %></td>
+<td><% if @user.errors[:avatar].any? %><div id="error"><%= @user.errors.get(:avatar) %></div><% end %></td>
+</tr>
+</table>
 <div>
 <%= f.submit %>
 </div>

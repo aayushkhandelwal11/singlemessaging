@@ -1,0 +1,19 @@
+<% if notice !=nil %>
+<p id="notice"><%= notice %></p>
+<%end%>
+<h1>Update Notification</h1>
+<div class="depot_form">
+<%= form_for @user,:html => { :multipart => true}  ,:url => update_notification_url do |f| %>
+<fieldset>
+<legend>Update Notification</legend>
+<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box :notification %> Check To receive notifications from site
+<div>
+<%= f.submit %>
+</div>
+</fieldset>
+<% end %>
+</div>
+
+<%= link_to 'Show', @user %> |
+<%= link_to 'Back', users_path %>

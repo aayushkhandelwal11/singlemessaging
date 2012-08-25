@@ -16,6 +16,9 @@ class UsersController < ApplicationController
   def change_avatar
     @user = User.find(session[:user_id])
   end
+  def change_notification
+    @user = User.find(session[:user_id])
+  end
   
   # GET /users/1
   # GET /users/1.json
@@ -60,19 +63,36 @@ class UsersController < ApplicationController
       end
     end
   end
-  
+  def update_notification
+   @user = User.find(session[:user_id])
+    respond_to do |format|
+       if params[:user] !=nil
+          if @user.update_attribute(:notification,params[:user][:notification])
+            format.html { redirect_to users_url,notice: "User #{@user.name} was successfully updated." }
+            format.json { head :no_content }
+          end 
+       else
+       
+         format.html { render action: "change_notification" }
+         format.json { render json: @user.errors, status: :unprocessable_entity }
+       end
+     end  
+  end
   
   def update_picture
    @user = User.find(session[:user_id])
     respond_to do |format|
-       if @user.update_attributes(params[:user])
-        format.html { redirect_to users_url,notice: "User #{@user.name} was successfully updated." }
-        format.json { head :no_content }
-      else
-        format.html { render action: "change_avatar" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
-    end
+       if params[:user] !=nil
+          if @user.update_attribute(:avatar,params[:user][:avatar])
+            format.html { redirect_to users_url,notice: "User #{@user.name} was successfully updated." }
+            format.json { head :no_content }
+          end 
+       else
+       
+         format.html { render action: "change_avatar" }
+         format.json { render json: @user.errors, status: :unprocessable_entity }
+       end
+     end  
   end
   
   # PUT /users/1
