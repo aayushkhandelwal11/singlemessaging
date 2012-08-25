@@ -34,10 +34,6 @@ class ThreadmessagesController < ApplicationController
     end
   end
 
-  # GET /threadmessages/1/edit
-  def edit
-    @threadmessage = Threadmessage.find(params[:id])
-  end
 
   # POST /threadmessages
   # POST /threadmessages.json
@@ -62,22 +58,6 @@ class ThreadmessagesController < ApplicationController
         format.json { render json: @threadmessage, status: :created, location: @threadmessage }
       else
         format.html { render action: "new" }
-        format.json { render json: @threadmessage.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /threadmessages/1
-  # PUT /threadmessages/1.json
-  def update
-    @threadmessage = Threadmessage.find(params[:id])
-
-    respond_to do |format|
-      if @threadmessage.update_attributes(params[:threadmessage])
-        format.html { redirect_to @threadmessage, notice: 'Threadmessage was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
         format.json { render json: @threadmessage.errors, status: :unprocessable_entity }
       end
     end

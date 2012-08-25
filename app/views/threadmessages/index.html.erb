@@ -21,7 +21,7 @@
   <% else %>
   <tr class="read">
   <%end%>
-    <td><%= threadmessage.description %></td>
+    <td> <%=truncate(threadmessage.description, :length => 25) %></td>
     <td><%= threadmessage.user.name %></td>
     <td><%= threadmessage.updated_at %></td>    
     <td><%= link_to 'Show', threadmessage %></td>

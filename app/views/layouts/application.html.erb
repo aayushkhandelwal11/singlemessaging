@@ -5,6 +5,7 @@
 <head>
   <title>Vinsol Messenger</title>
   <%= stylesheet_link_tag "application" %>
+  <%#= stylesheet_link_tag "scaffolds.css.scss" %>
   <%= javascript_include_tag "application"  %>
   <%= javascript_include_tag "autocomplete-rails.js" %>
   <%= stylesheet_link_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/themes/ui-lightness/jquery-ui.css" %>
@@ -28,6 +29,7 @@
       <ul>
         <% if session[:user_id]==nil %> 
         <li><%= link_to 'New user', new_user_path %></li>
+        <li><%= link_to 'Home', mes_url %></li>
         <% else %>
         <%= image_tag (User.find session[:user_id]).avatar.url(:small) %>
         <li><%= link_to 'Home', mes_url %></li>

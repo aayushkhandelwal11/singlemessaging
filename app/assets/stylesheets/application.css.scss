@@ -59,6 +59,7 @@
   }
 }
 .depot_form {
+  display:relative;
   fieldset {
     background: #6cd2d7;
 
@@ -69,9 +70,9 @@
       padding: 0.2em 1em;
     }
   }
-
+  
   form {
-    label {
+      label {
       width: 5em;
       float: left;
       text-align: right;
@@ -80,18 +81,19 @@
       display: block;
     }
 
-    select, textarea, input {
+    textarea, input {
       margin-left: 0.5em;
     }
 
     .submit {
       margin-left: 4em;
     }
+ 
 
-    br {
-      display: none
-    }
   }
+}
+div#error{
+  color:red;
 }
 .mm {
 margin-left: 13em;

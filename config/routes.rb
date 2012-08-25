@@ -9,9 +9,9 @@ Singlemessaging::Application.routes.draw do
 
   get "sessions/destroy"
 
-  resources :threadmessages
+  resources :threadmessages, :except => [:edit, :update]
 
-  resources :messages
+  resources :messages, :except => [:edit, :update]
   #match 'users/change_avatar' => 'users#change_avatar',:via => "put"
   #match.resources :users, :member => { :change_avatar => :get }
   #match '/users/change_avatar', :controller => 'users', :action => 'change_avatar', :method => 'put'
