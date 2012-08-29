@@ -15,10 +15,15 @@ class UsersControllerTest < ActionController::TestCase
     get :new
     assert_response :success
   end
+  test "should not update without name " do
+    assert_same('User.count') do
+      post :create, user: { age: @user.age, email: @user.email }
+    end
+  end
 
   test "should create user" do
     assert_difference('User.count') do
-      post :create, user: { age: @user.age, email: @user.email, name: @user.name }
+      post :create, user: { age: @user.age, email: @user.email, name: @user.name , @notification: "1" , password_digest:}
     end
 
     assert_redirected_to user_path(assigns(:user))

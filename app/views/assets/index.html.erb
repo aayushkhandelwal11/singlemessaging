@@ -1,0 +1,13 @@
+<table>
+<% if @assets %> 
+<% @assets.each do |asset| %>
+  <tr>
+      <td><%= link_to asset.document_file_name , :file_name => asset.document_file_name if asset.document_file_name %> </td>
+      <td><%= link_to 'Destroy', asset, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+<%end %>
+<br />
+
+<%= link_to 'New Asset', new_asset_path %>

@@ -1,6 +1,8 @@
 Singlemessaging::Application.routes.draw do
 
 
+ 
+
   get "admin/index"
 
   get "sessions/new"
@@ -8,23 +10,17 @@ Singlemessaging::Application.routes.draw do
   get "sessions/create"
 
   get "sessions/destroy"
-
-  resources :threadmessages, :except => [:edit, :update]
-
+  #match "threadmessages/new/addlink" => "threadmessages#addlink", :as => "addlink",:via => "get"
+  #match "threadmessages/sedit/addlink" => "threadmessages#addlink", :as => "addlink",:via => "get"
+  match "/draft_index" => "threadmessages#draft_index", :as => "draft_index",:via => "get"
+  resources :threadmessages,:except => [:create] 
   resources :messages, :except => [:edit, :update]
-  #match 'users/change_avatar' => 'users#change_avatar',:via => "put"
-  #match.resources :users, :member => { :change_avatar => :get }
-  #match '/users/change_avatar', :controller => 'users', :action => 'change_avatar', :method => 'put'
+  resources :assets 
   match "/change_avatar" => "users#change_avatar", :as => "change_avatar",:via => "get"
   match "/update_picture" => "users#update_picture", :as => "update_picture",:via => "put"
   match "/change_notification" => "users#change_notification", :as => "change_notification",:via => "get"
   match "/update_notification" => "users#update_notification", :as => "update_notification",:via => "put"
   resources :users do
-   #collection do
-      #put "change_avatar"
-    #end
-     #put :change_avatar,:on => :collection
-     #put :update_picture,:on => :collection,:as=>"update_picture"
      get :autocomplete_user_name,:on => :collection
   end
   

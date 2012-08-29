@@ -15,8 +15,17 @@
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </div>
+  <div class="assets">
+    <% f.fields_for :assets do |asset| %>
+       <%= asset.file_field :document %>
+    <%end%>
+  </div>
+  <div id="addinglink">
+  
+  </div>
+  <%= link_to 'New Attachment', new_asset_path %>
  
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit 'send'%>
   </div>
 <% end %>

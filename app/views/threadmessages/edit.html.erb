@@ -1,0 +1,7 @@
+<% if notice !=nil %>
+<p id="notice"><%= notice %></p>
+<%end%>
+<%= render "form" %>
+<%#=  render :template => "assets/new", :locals => {@asset => @threadmessage.assets.last} %>
+
+<%= link_to 'Back', threadmessages_path %>

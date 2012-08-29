@@ -3,8 +3,8 @@ class MessagesController < ApplicationController
   # GET /messages.json
   autocomplete :user, :name
   def index
-    @messages = Kaminari.paginate_array(Message.includes(:to_user,:from_user,:threadmessages).order('updated_at DESC').find(:all,:conditions => ['(to_user_id=? and status in ("b","u")) or (from_user_id=? and status in ("b","r"))',session[:user_id],session[:user_id]])).page(params[:page]).per(10)
-
+    @messages = Kaminari.paginate_array(Message.includes(:to_user,:from_user,:threadmessages).order('updated_at DESC').find(:all,:conditions => ['(to_user_id=? and status in ("b","u")) or     (from_user_id=? and status in ("b","r"))',session[:user_id],session[:user_id]])).page(params[:page]).per(10)
+     
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @messages }

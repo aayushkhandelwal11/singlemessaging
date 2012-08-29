@@ -1,10 +1,12 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  name: MyString
-  email: MyString
-  age: 
-
+  name: rahul
+  email: rahul@vinsol.com
+  age: 21
+  notification: 1
+  hashed_password: <%= User.encrypted_password('secret', SALT) %>
+  avatar:
 two:
   name: MyString
   email: MyString

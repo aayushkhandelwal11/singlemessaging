@@ -1,9 +1,34 @@
-<% if notice !=nil %>
+<% if notice  %>
 <p id="notice"><%= notice %></p>
 <%end%>
 <h1>Editing user</h1>
+<div class="depot_form">
+<%= form_for @user do |f| %>
+<fieldset>
+<legend>Enter New Password</legend>
+<table> 
+<tr>
+<td><%= f.label :old, 'OldPassword' %></td>
+<td><%= f.password_field :old, size: 40 %></td>
+<tr>
+</tr>
+<td><%= f.label :password, 'Password' %></td>
+<% if @user.errors[:password].any? %><td class="error"><% else %><td><% end %><%= f.password_field :password, size: 40 %></td>
+<td><% if @user.errors[:password].any? %><div id="error"><%= @user.errors.get(:password) %></div><% end %></td>
+</tr>
+<tr>
+<td><%= f.label :password_confirmation, 'Confirm' %></td>
+<% if @user.errors[:password_confirmation].any? %><td class="error"><% else %><td><% end %><%= f.password_field :password_confirmation, size: 40 %></td>
+<td><% if @user.errors[:password_confirmation].any? %><div id="error"><%= @user.errors.get(:password_confirmation) %></div><% end %></td>
+</tr>
+<table>
+<div>
+<%= f.submit %>
+</div>
 
-<%= render 'editform' %>
+</fieldset>
+<% end %>
+</div>
 
 <%= link_to 'Show', @user %> |
 <%= link_to 'Back', users_path %>
