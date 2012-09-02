@@ -11,24 +11,42 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120828091843) do
+ActiveRecord::Schema.define(:version => 20120901052741) do
 
   create_table "assets", :force => true do |t|
-    t.integer  "threadmessage_id"
     t.datetime "created_at",            :null => false
     t.datetime "updated_at",            :null => false
     t.string   "document_file_name"
     t.string   "document_content_type"
     t.integer  "document_file_size"
     t.datetime "document_updated_at"
+    t.integer  "message_id"
+  end
+
+  create_table "flag_messages", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "message_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "messages", :force => true do |t|
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.string   "content"
+    t.integer  "parent_id"
+    t.boolean  "flagged",    :default => false
+    t.integer  "sender_id"
+    t.string   "subject"
+  end
+
+  create_table "receivers", :force => true do |t|
+    t.integer  "message_id"
+    t.integer  "user_id"
     t.string   "status"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
-    t.integer  "to_user_id"
-    t.integer  "from_user_id"
+    t.boolean  "read"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "threadmessages", :force => true do |t|

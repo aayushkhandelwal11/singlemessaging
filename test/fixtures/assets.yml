@@ -1,9 +1,9 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+## Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-one:
-  threadmessage_id: MyString
-  : 1
+#one:
+#  threadmessage_id: MyString
+#  : 1
 
-two:
-  threadmessage_id: MyString
-  : 1
+#two:
+#  threadmessage_id: MyString
+#  : 1

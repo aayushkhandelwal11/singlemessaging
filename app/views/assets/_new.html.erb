@@ -1,0 +1,10 @@
+<%= form_for @asset ,:html => { :multipart => true} do |f| %>
+  <div class="field">
+    <%= f.file_field :document %><br />
+  </div>
+  <div class="actions">
+    <%= f.submit 'send'%>
+  </div>
+<% end %>
+
+

@@ -1,7 +1,16 @@
 <% if notice !=nil %>
 <p id="notice"><%= notice %></p>
 <%end%>
-<h1>New message</h1>
+<fieldset id="outer">
+<legend>New message</legend>
+<%= form_for(@message) do |f| %>
+
+ 
+Send To <%= f.autocomplete_field :sender_id, autocomplete_user_name_users_path ,:"data-delimiter" => ';',:size=> 70%>
+  
+
 <%= render 'form' %>
-Put semicolon(;) in between users
+
+<% end %>
+</fieldset>
 <%= link_to 'Back', messages_path %>

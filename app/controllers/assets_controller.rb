@@ -43,23 +43,24 @@ class AssetsController < ApplicationController
   # POST /assets
   # POST /assets.json
   def create
-     array_of_id=session[:list_users]
+     array_of_id=session[:list_threadmessage]
      array_of_id.each do |threadid|
        @asset=Asset.new(params[:asset])
        @asset.threadmessage = Threadmessage.find(threadid)
        @asset.save 
       
-     end    
-
-    respond_to do |format|
-      if @asset.save
-        format.html { redirect_to @asset, notice: 'Asset was successfully created.' }
-        format.json { render json: @asset, status: :created, location: @asset }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @asset.errors, status: :unprocessable_entity }
-      end
-    end
+     end 
+        
+  #end
+#    respond_to do |format|
+#      if @asset.save
+#        format.html { redirect_to @asset, notice: 'Asset was successfully created.' }
+#        format.json { render json: @asset, status: :created, location: @asset }
+#      else
+#        format.html { render action: "new" }
+#        format.json { render json: @asset.errors, status: :unprocessable_entity }
+#      end
+#    end
   end
 
   # PUT /assets/1
@@ -78,8 +79,7 @@ class AssetsController < ApplicationController
     end
   end
 
-  # DELETE /assets/1
-  # DELETE /assets/1.json
+  
   def destroy
     @asset = Asset.find(params[:id])
     @asset.destroy

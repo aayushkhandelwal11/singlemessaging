@@ -1,23 +1,20 @@
 <%#= javascript_include_tag "messagestore.js"  %>
-<%= form_for(@message) do |f| %>
-  <% if @message.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@message.errors.count, "error") %> prohibited this message from being saved:</h2>
 
-      <ul>
-      <% @message.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= form_for @message,:multipart => true  do |f| %>
   <div class="field">
-    <%= f.autocomplete_field :to_user_id , autocomplete_user_name_users_path ,:"data-delimiter" => ';'%>
-    <%= f.hidden_field :service, :value => :to_user_id %>
-    
+    <%= f.label :subject %>&nbsp;&nbsp;
+    <%= f.text_field :subject,:size=> 70 %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
+
+   <div class="field">
+    <%= f.label :content %><br />
+    <%= f.text_area :content,:cols=>116,:rows=>6 %>
   </div>
+  <%= f.fields_for :assets do |builder| %>
+         <%= builder.label :document,"Attach a file" %> 
+         <%= builder.file_field :document %><br />
+   <% end %>
+  <%= f.submit 'send', :class => "create" %>
+  <%= f.submit 'save to drafts', :class => "create" %> 
 <% end %>
+  

@@ -1,0 +1,27 @@
+<%#= paginate @messages %>
+<table>
+  <tr>
+    <th colspan ='2'>From user</th>
+    <th colspan ='2'> TO</th>
+    <th colspan ='2'> Subject</th>
+    <th colspan ='2'>Date</th>
+    <th colspan ='2'></th>
+  </tr>
+
+<% @messages.each do |message| %>
+    <td colspan ='2'><%= message.sender.name %></td>
+    <td colspan ='2'> <%for receiver in message.receivers %>
+            <%=receiver.user.name%>,
+         <%end%>
+    <td colspan ='2'><%= link_to message.subject, message %></td>
+    <td colspan ='2'><%= message.updated_at.ctime %></td>
+    
+    <td><%#= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+
+    
+</tr>
+<% end %>
+</table>
+
+<br />
+

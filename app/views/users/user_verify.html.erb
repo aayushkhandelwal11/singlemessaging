@@ -1,0 +1,25 @@
+<% if notice !=nil %>
+<p id="notice"><%= notice %></p>
+<%end%>
+<div class="depot_form">
+<%= form_for @user,:url => "send_password",:method =>"get" do |f| %>
+<fieldset>
+<legend>Enter User Details</legend>
+<table>
+<tr>
+<td><%= f.label :name %></td>
+<td><%= f.text_field :name, size: 40 %></td>
+</tr>
+<tr>
+<td><%= f.label :email %></td>
+<td><%= f.email_field :email, size: 40 %></td>
+</tr>
+</table>
+<br>
+<br>
+<%= f.submit "Verify" %>
+</div>
+</fieldset>
+<% end %>
+</div>
+

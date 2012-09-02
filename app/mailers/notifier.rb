@@ -17,4 +17,11 @@ class Notifier < ActionMailer::Base
     @user=user
     mail(:to => "#{user.name} <#{user.email}>", :subject => "welcome")
   end
+  
+  def send_password(user,pass)
+    @pass=pass
+    @greeting = "Hi"
+    @user=user
+    mail(:to => "#{user.name} <#{user.email}>", :subject => " Password")
+  end
 end

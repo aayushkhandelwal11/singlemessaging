@@ -2,18 +2,13 @@
 <p id="notice"><%= notice %></p>
 <%end%>
 Send by:-<br>
-<%= image_tag @threadmessage.user.avatar.url(:small) %>
+<%= image_tag @message.from_user.avatar.url(:small) %>
 <p>
-  <b>Description:</b>
-  <%= @threadmessage.description %>
-</p>
-
-<p>
-  <b>Status:</b>
-  <%= @threadmessage.status %>
+  <b>CONTENT:</b>
+  <%= @message.content %>
 </p>
   <div class="assets">
-    <% for asset in @threadmessage.assets %>
+    <% for asset in @message.assets %>
        <%#= asset.document_file_name %>
       
        <%#= link_to asset.document_file_name ,:action => :download, :file_name => asset.document_file_name if asset.document_file_name %> 
@@ -22,4 +17,4 @@ Send by:-<br>
   </div>
 
 
-<%= link_to 'Back', threadmessages_path %>
+<%= link_to 'Back', request.referrer %>

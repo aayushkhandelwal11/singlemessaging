@@ -1,0 +1,7 @@
+<%#= javascript_include_tag "messagestore.js"  %>
+<%= form_for @message , :url =>{:action => "reply" }, :method => "get" do |f| %>
+   <fieldset id="outer">
+   <%= render "form"%>
+   </fieldset>
+<% end %>
+  

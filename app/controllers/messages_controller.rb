@@ -2,34 +2,132 @@ class MessagesController < ApplicationController
   # GET /messages
   # GET /messages.json
   autocomplete :user, :name
-  def index
-    @messages = Kaminari.paginate_array(Message.includes(:to_user,:from_user,:threadmessages).order('updated_at DESC').find(:all,:conditions => ['(to_user_id=? and status in ("b","u")) or     (from_user_id=? and status in ("b","r"))',session[:user_id],session[:user_id]])).page(params[:page]).per(10)
-     
+  def outbox
+  @messages=Message.includes(:sender).ordering_by_updated_at.select("m.id,m.sender_id,m.updated_at,m.subject").sent.where("sender_id= ?",session[:user_id]).join_with_receiver.group("parent_id").page(params[:page]).per(5)
     respond_to do |format|
+      format.html
+      format.json { render json: @messages }
+    end
+  end
+  
+  
+  def index
+    @messages=Message.includes(:sender,:receivers).ordering_by_updated_at.select("m.id,m.sender_id,m.updated_at,m.subject").sent.where("r.user_id =?",session[:user_id]).join_with_receiver.group("m.id").page(params[:page]).per(5)
+     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @messages }
     end
   end
+ 
+  def draft_index
+    @messages=Message.includes(:sender).ordering_by_updated_at.select("m.id,m.sender_id,m.updated_at,m.subject").where("r.status='d' and m.sender_id =?",session[:user_id]).join_with_receiver.group("m.id").page(params[:page]).per(5)
 
-  # GET /threadmessages
-  # GET /threadmessages
-  def show
-    session[:message_id]=params[:id]
-    session[:list_users]=[params[:id]]
-       
-    redirect_to threadmessages_url
-   
-     
-    #respond_to do |format|
-     # format.html # show.html.erb
-      #format.json { render json: @message }
-    #end
+    
+    respond_to do |format|
+      format.html
+      format.json { render json: @messages }
+    end
   end
 
-  # GET /messages/new
-  # GET /messages/new.json
+  def flag
+     @message=Message.find session[:message_id]
+    count=0 
+    if ! FlagMessage.find_by_user_id_and_message_id(session[:user_id],session[:message_id])
+      count=1
+      FlagMessage.create(:user_id =>session[:user_id],:message_id => session[:message_id])
+    end
+     respond_to do |format|
+      if count==1
+        
+        format.html { redirect_to request.referrer, notice: 'U flagged it' }
+        format.json { render json: @message, status: :created, location: @message }
+      else
+        format.html { redirect_to request.referrer, notice: 'U have already flagged it ' }
+        format.json { render json: @message.errors, status: :unprocessable_entity }
+      
+      end
+     end 
+  end
+  
+  def reply
+    
+    @message = Message.new(params[:message])
+    @message.sender=User.find session[:user_id]
+    #@message.content=params[:message][:content]
+    @message.parent_id=session[:message_id]
+    #@message.content=
+    @message.save
+    parentmessage=Message.find @message.parent_id
+    parentmessage.updated_at=Time.now
+    parentmessage.save
+    array_of_user=[]
+    if parentmessage.sender_id != session[:user_id]
+       array_of_user=[parentmessage.sender_id]
+    else
+       
+       array_of_user= Receiver.find_all_by_message_id(session[:message_id]).collect(&:user_id)
+
+    end
+    array_of_user.each do |num|
+    
+      @receiver = Receiver.new
+      if params[:commit]=="send"
+         @receiver.status="b"
+         @receiver.read='false'
+      else
+         @receiver.status="d"
+      end   
+      @receiver.user=User.find (num)
+      @receiver.message =@message
+      if @receiver.save && @receiver.status == "b" 
+         if @receiver.user.notification == "1"
+           Notifier.gmail_message(@message.sender,@receiver.user).deliver   
+         end
+      end    
+   
+    end
+   
+     respond_to do |format|
+      if @message.save
+      
+        format.html { redirect_to request.referrer, notice: 'Replied' }
+        format.json { render json: @message, status: :created, location: @message }
+      else
+        format.html { redirect_to message_url, notice: 'Something went wrong' }
+        format.json { render json: @message.errors, status: :unprocessable_entity }
+      end
+    end
+    
+  end
+  
+  
+  def show
+    @message = Message.find(params[:id])   
+    session[:message_id]=params[:id]
+    name=(User.find session[:user_id]).name
+    #@messages=Kaminari.paginate_array(Message.ordering.all).page(params[:page]).per(3)
+    if @message.sender_id == session[:user_id]
+       @sender=name
+       @receiver=User.select("u.name").where("r.message_id= ?",params[:id]).join_with_receiver.collect(&:name).join(', ')
+       @messages=Message.includes(:sender,:assets).ordering.select("m.id,m.sender_id,m.created_at,m.content,m.subject").sent.where("m.id =? or parent_id =? ",params[:id],params[:id]).join_with_receiver.group("m.id").page(params[:page]).per(3)
+    else
+       @receiver=name
+       @sender=@message.sender.name
+       j=[session[:user_id],@message.sender_id]
+      @messages=Message.includes(:sender,:assets).ordering.select("m.id,m.sender_id,m.created_at,m.content,m.subject").sent.where("m.sender_id in (?)",j).join_with_receiver.group("m.id").page(params[:page]).per(3)
+    end  
+   
+    respond_to do |format|
+      @message=Message.new
+       3.times { @message.assets.build}
+      format.html
+      format.json { render json: @messages }
+    end
+  end
+
   def new
     @message = Message.new
+    3.times { @message.assets.build}
     
     respond_to do |format|
       format.html # new.html.erb
@@ -40,24 +138,50 @@ class MessagesController < ApplicationController
   # POST /messages
   # POST /messages.json
   def create
-    array_of_id=[]
-    array_of_user=params[:message][:to_user_id].split(";")
-    array_of_user.each do |num|
-      @message = Message.new
-      @message.status='b'
-      @message.from_user=User.find session[:user_id]
-      u=User.find_by_name(num)
-      @message.to_user=u
+    array_of_id=[] 
+    count=0
+    if params[:message][:sender_id].length>1 &&params[:message][:content].length>1
+      count=1
+      array_of_user=params[:message][:sender_id].split(";")
+      @message = Message.new(params[:message])
+      @message.sender=User.find session[:user_id]
+      @message.content=params[:message][:content]
+      @message.parent_id=0
+      @message.subject=params[:message][:subject]
       @message.save
-      array_of_id.push(@message.id)
+      array_of_user.each do |num|
+        @receiver = Receiver.new
+          if params[:commit]=="send"
+            @receiver.status="b"
+            @receiver.read='false'
+          else
+            @receiver.status="d"
+          end   
+        @receiver.user=User.find_by_name(num)
+        @receiver.message =@message
+        if @receiver.save && @receiver.status == "b" 
+          if @receiver.user.notification == "1"
+            Notifier.gmail_message(@message.sender,@receiver.user).deliver   
+          end
+        end  
       
-    end
-    #@message.to_user_id=u.id
-     respond_to do |format|
-      if @message.save
-        session[:list_users]=array_of_id
-        format.html { redirect_to new_threadmessage_path, notice: 'Message was successfully created. from #{params[:to_user]}' }
+      end
+    end  
+    respond_to do |format|
+      if  count==1 && @message.save
+        if params[:commit]!="send"
+            format.html { redirect_to mes_url, notice: 'Message was Saved in drafts' }
+        else
+            format.html { redirect_to mes_url, notice: 'Message was Send' }
+        end
         format.json { render json: @message, status: :created, location: @message }
+      elsif count==0
+        if params[:message][:content].length<1
+          format.html { redirect_to request.referrer, notice: 'Subject is empty' }
+        else
+          format.html { redirect_to request.referrer, notice: 'Mention atleast one recepent' }
+        end  
+        format.json { render json: @message.errors, status: :unprocessable_entity }
       else
         format.html { render action: "new" }
         format.json { render json: @message.errors, status: :unprocessable_entity }
@@ -70,21 +194,31 @@ class MessagesController < ApplicationController
 
   def destroy
     @message = Message.find(params[:id])
-    if @message.status=="b"
-      if @message.to_user_id == session[:user_id]
-         @message.status="r"
-      else
-         @message.status="u"  
+    if @message.sender_id == session[:user_id]
+       receivers=Receiver.find_all_by_message_id(params[:id])
+       receivers.each do |receiver|
+         if receiver.status == "d"
+            @message.destroy
+            break;        
+         elsif receiver.status="b"
+             receiver.status="s"
+             receiver.save
+         elsif receiver.status="r"
+             receiver.status="u"
+             receiver.save
+         end
+       end          
+   else
+      receiver=Receiver.find_by_message_id_and_user_id(params[:id],session[:user_id])
+      if receiver.status == "b"
+          receiver.status="r"
+      elsif receiver.status="s"
+          receiver.status="u"
       end
-         @message.save 
-    else
-    			@message.destroy
-    		   	
-    end  
-    
-
+      receiver.save          
+   end
     respond_to do |format|
-      format.html { redirect_to messages_url }
+      format.html { redirect_to request.referrer }
       format.json { head :no_content }
     end
   end
