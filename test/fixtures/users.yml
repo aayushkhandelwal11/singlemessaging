@@ -1,9 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  name: MyString
-  email: MyString
-  age: 
+  name: aayush
+  email: aayush.khandelwal@vinsol.com
+  age: 22
+  password: aayush11
+  password_confirmation: aayush11
+  notification: one
+  avatar: 3
 two:
   name: MyString
   email: MyString
