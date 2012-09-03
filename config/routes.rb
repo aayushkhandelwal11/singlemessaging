@@ -5,21 +5,20 @@ Singlemessaging::Application.routes.draw do
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"
-  resources :threadmessages do
-    get :download
-  end
-  
-  match "/show_particular/:id" => "messages#show_particular", :as => "show_particular",:via => "get"
+ 
+  match "/downloads/:id" => "messages#downloads", :as => "downloads",:via => "get"
   match "/draft_index" => "messages#draft_index", :as => "draft_index",:via => "get"
   match "/reply" => "messages#reply", :as => "reply",:via => "get"
   match "/flag" => "messages#flag", :as => "flag",:via => "put"
   match "/outbox" => "messages#outbox", :as => "outbox",:via => "get"
   match "/edit_draft/:id" => "messages#edit_draft", :as => "edit_draft",:via => "get"
   match "/send_draft" => "messages#send_draft", :as => "send_draft",:via => "put"
-  resources :messages, :except => [:edit, :update]
-  
-  resources :assets 
-  
+  resources :messages, :except => [:edit, :update] do
+    member do 
+      get :downloads
+    end
+  end
+
   match "/change_avatar" => "users#change_avatar", :as => "change_avatar",:via => "get"
   match "/update_picture" => "users#update_picture", :as => "update_picture",:via => "put"
   match "/change_notification" => "users#change_notification", :as => "change_notification",:via => "get"

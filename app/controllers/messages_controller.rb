@@ -12,16 +12,14 @@ class MessagesController < ApplicationController
   def edit_draft
     @message = Message.includes(:receivers).find(params[:id])
     session[:edit_message]=@message.id
-    count=3-@message.assets.count
-    count.times { @message.assets.build }
   end
   
   def send_draft
     @message = Message.find(session[:edit_message])
-    @message1 = Message.new(params[:message])
-    @message.content = @message1.content
-    @message.subject = @message1.subject
-    @message.assets = @message.assets
+    #@message1 = Message.new(params[:message])
+    @message.content = params[:message][:content]
+    @message.subject = params[:message][:subject]
+    @message.assets = params[:message][:assets]
     @message.parent_id = 0
     @message.save
     @message.receivers.each do |receiver|
@@ -58,6 +56,14 @@ class MessagesController < ApplicationController
       format.json { render json: @messages }
     end
   end
+  def downloads
+   @asset = Asset.find(params[:id])
+ 
+     send_file @asset.document.path, :type => @asset.document_content_type
+  
+  end
+
+
 
   def flag
     @message=Message.find session[:message_id]
@@ -68,7 +74,9 @@ class MessagesController < ApplicationController
     if ! FlagMessage.find_by_user_id_and_message_id(session[:user_id],@message.id)
       count=1
       FlagMessage.create(:user_id =>session[:user_id],:message_id => @message.id)
+      @message.reload
     end
+    
     respond_to do |format|
       if @message.flagged
          format.html { redirect_to inbox_url, notice: 'U flagged it and it will no longer be available' }

@@ -1,13 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  name: aayush
-  email: aayush.khandelwal@vinsol.com
+  name: dave
+  email: dave.khandelwal@vinsol.com
   age: 22
-  password: aayush11
-  password_confirmation: aayush11
-  notification: one
-  avatar: 3
+  password_digest: <%= BCrypt::Password.create('password') %>
+  notification: 1
+  avatar_file_name: "390550_2061284230599_1911003160_n.jpg"
+  avatar_content_type: "image/jpeg"
+  avatar_file_size: 17185
+  avatar_updated_at: "2012-08-31 12:56:18"
 two:
   name: MyString
   email: MyString

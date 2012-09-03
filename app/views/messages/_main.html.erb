@@ -9,7 +9,12 @@
   </tr>
 
 <% @messages.each do |message| %>
-  <tr>
+  <tr class="read">
+  <% for receiver in message.receivers %>
+        <% if receiver.user_id == session[:user_id] && !receiver.read %>
+           <tr class="unread">
+        <%end%>
+    <%end%>  
   <td colspan ='2'>  <%= message.sender.name %></td>
     <td colspan ='2'> 
          <%for receiver in message.receivers %>

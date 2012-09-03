@@ -1,6 +1,7 @@
 <% if notice !=nil %>
 <p id="notice"><%= notice %></p>
 <%end%>
+
 <h4> From <%=@sender%><br>
 
 To <%=@receiver%>
@@ -24,9 +25,9 @@ To <%=@receiver%>
     <div id="box">
     <%= message.content %>
     </div>
-    
+    <br>
     <% for asset in message.assets %>
-       <%= asset.document_file_name %><br>
+       <%=link_to asset.document_file_name , downloads_url(asset.id) %> <br>
       
        <%#= link_to asset.document_file_name ,:action => :download, :file_name => asset.document_file_name if asset.document_file_name %> 
     <%end%> 
@@ -41,8 +42,12 @@ To <%=@receiver%>
 <button id="buttonreply" class="create">Reply</button>
 
 
-
+<%= form_for @message, :url =>{:action => "reply" }, :method => "get" , :html => {:multipart => true} do |f| %>
 <div id="replying" >
- <%= render "reply" %>
+ 
+  <fieldset id="outer">
+   <%= render "reply",:html => {:multipart => true}%>
+  </fieldset>
+ 
 </div>
-
+<%end%>
