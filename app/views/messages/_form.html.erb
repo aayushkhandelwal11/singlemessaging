@@ -1,6 +1,6 @@
 <%#= javascript_include_tag "messagestore.js"  %>
 
-<%= form_for @message,:multipart => true  do |f| %>
+<%= form_for @message, :html => {:multipart => true} do |f| %>
   <div class="field">
     <%= f.label :subject %>&nbsp;&nbsp;
     <%= f.text_field :subject,:size=> 70 %>

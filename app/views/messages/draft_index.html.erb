@@ -14,7 +14,7 @@
 <% @messages.each do |message| %>
     <td><%= message.subject %></td>
     <td><%= message.updated_at.ctime %></td>
-    <td><%= link_to 'edit' %></td>
+    <td><%= link_to 'edit' ,edit_draft_url(message.id)%></td>
     <td><%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
 
     

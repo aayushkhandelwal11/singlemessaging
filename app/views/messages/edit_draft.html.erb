@@ -1,0 +1,16 @@
+<% if notice !=nil %>
+<p id="notice"><%= notice %></p>
+<%end%>
+<fieldset id="outer">
+<legend>Draft</legend>
+<%= form_for @message, :html => {:multipart => true} ,:url => send_draft_url, :method =>"put" do |f| %>
+
+ To: <% for receiver in @message.receivers %>
+          <%=receiver.user.name%>
+      <% end %>  
+
+<%= render 'form' %>
+
+<% end %>
+</fieldset>
+<%= link_to 'Back', messages_path %>

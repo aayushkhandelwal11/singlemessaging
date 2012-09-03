@@ -26,10 +26,10 @@ To <%=@receiver%>
     </div>
     
     <% for asset in message.assets %>
-       <%= asset.document_file_name %>
+       <%= asset.document_file_name %><br>
       
        <%#= link_to asset.document_file_name ,:action => :download, :file_name => asset.document_file_name if asset.document_file_name %> 
-    <%end%>    
+    <%end%> 
    <%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %>
     </table>
     </fieldset> 

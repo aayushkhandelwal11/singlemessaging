@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   autocomplete :user, :name
   
   def index
-    redirect_to mes_url
+    redirect_to inbox_url
   end
   
   def change_avatar

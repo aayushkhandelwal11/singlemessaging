@@ -9,17 +9,15 @@
   </tr>
 
 <% @messages.each do |message| %>
-    <td colspan ='2'><%= message.sender.name %></td>
-    <td colspan ='2'> <%for receiver in message.receivers %>
+  <tr>
+  <td colspan ='2'>  <%= message.sender.name %></td>
+    <td colspan ='2'> 
+         <%for receiver in message.receivers %>
             <%=receiver.user.name%>,
          <%end%>
     <td colspan ='2'><%= link_to message.subject, message %></td>
     <td colspan ='2'><%= message.updated_at.ctime %></td>
-    
-    <td><%#= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-
-    
-</tr>
+  </tr>
 <% end %>
 </table>
 

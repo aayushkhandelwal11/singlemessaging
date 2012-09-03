@@ -2,25 +2,20 @@ Singlemessaging::Application.routes.draw do
 
 
  #fix: use resource as much as possible.
-
-  get "admin/index"
-
   get "sessions/new"
-
   get "sessions/create"
-
   get "sessions/destroy"
-  #match "threadmessages/new/addlink" => "threadmessages#addlink", :as => "addlink",:via => "get"
-  #match "threadmessages/sedit/addlink" => "threadmessages#addlink", :as => "addlink",:via => "get"
-  #match "/draft_index" => "threadmessages#draft_index", :as => "draft_index",:via => "get"
   resources :threadmessages do
     get :download
   end
+  
   match "/show_particular/:id" => "messages#show_particular", :as => "show_particular",:via => "get"
   match "/draft_index" => "messages#draft_index", :as => "draft_index",:via => "get"
   match "/reply" => "messages#reply", :as => "reply",:via => "get"
   match "/flag" => "messages#flag", :as => "flag",:via => "put"
   match "/outbox" => "messages#outbox", :as => "outbox",:via => "get"
+  match "/edit_draft/:id" => "messages#edit_draft", :as => "edit_draft",:via => "get"
+  match "/send_draft" => "messages#send_draft", :as => "send_draft",:via => "put"
   resources :messages, :except => [:edit, :update]
   
   resources :assets 
@@ -90,7 +85,7 @@ Singlemessaging::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-    root :to => 'messages#index', as: 'mes' 
+    root :to => 'messages#index', as: 'inbox' 
 
   # See how all your routes lay out with "rake routes"
 
