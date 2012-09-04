@@ -14,7 +14,7 @@ class Message < ActiveRecord::Base
   
   validates :sender_id, :presence=> true
 
-
+  #scope :find_related_message
   scope :showing, includes(:sender,:assets).order('messages.created_at DESC').select(" messages.id , sender_id , messages.created_at , content , subject ")
   scope :sent, where('r.status !="d"')
   scope :ordering_by_updated_at, order('messages.updated_at DESC')

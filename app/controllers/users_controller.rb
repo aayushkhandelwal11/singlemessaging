@@ -21,15 +21,18 @@ class UsersController < ApplicationController
   end
   
   def send_password
-   
-   respond_to do |format|
-    if User.find_by_name_and_email(params[:user][:name],params[:user][:email])
+   count=0
+   if User.find_by_name_and_email(params[:user][:name],params[:user][:email])
       @user=User.find_by_name params[:user][:name]
       pass=SecureRandom.urlsafe_base64
       @user.password=pass
       @user.password_confirmation=pass
       @user.save
       Notifier.send_password(@user,pass).deliver
+      count=1 
+   end   
+   respond_to do |format|
+    if count== 1
       format.html { redirect_to request.referrer, notice: 'A mail has been sent to you' }
     else
       format.html { redirect_to request.referrer, notice: "Your entry Doesn't match our record" }

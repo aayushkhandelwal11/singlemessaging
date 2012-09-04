@@ -2,7 +2,7 @@ class MessagesController < ApplicationController
   autocomplete :user, :name
   
   def outbox
-  @messages = Message.includes(:sender).ordering_by_updated_at.select("messages.id , sender_id , messages.updated_at , subject").sent.where("sender_id= ?",session[:user_id]).join_with_receiver.group("parent_id,messages.id").page(params[:page]).per(5)
+    @messages = Message.includes(:sender).ordering_by_updated_at.select("messages.id , sender_id , messages.updated_at , subject").sent.where("sender_id= ?",session[:user_id]).join_with_receiver.group("parent_id,messages.id").page(params[:page]).per(5)
     respond_to do |format|
       format.html
       format.json { render json: @messages }
@@ -103,7 +103,7 @@ class MessagesController < ApplicationController
     end 
     @message.save
     parentmessage=Message.find @message.parent_id
-    parentmessage.updated_at=Time.now
+    #parentmessage.updated_at=Time.now
     parentmessage.save
     array_of_user=[]
     if parentmessage.sender_id != session[:user_id]
@@ -161,12 +161,12 @@ class MessagesController < ApplicationController
        @sender=name
        @receiver=User.select("u.name").where("r.message_id= ?",params[:id]).join_with_receiver.collect(&:name).join(', ')
        
-       @messages=Message.showing.where("(messages.id =? or parent_id =?) and (( sender_id=? and status in ('b','r')) or (sender_id !=? and status in ('b','s')))",parentmessage.id,parentmessage.id,session[:user_id],session[:user_id] ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
+       @messages=Message.showing.where("(messages.updated_at <= ?) and (messages.id =? or parent_id =?) and (( sender_id=? and status in ('b','r')) or (sender_id !=? and status in ('b','s')))",@message.updated_at,parentmessage.id,parentmessage.id,session[:user_id],session[:user_id] ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
     else
        @receiver=name
        @sender=@message.sender.name
        
-       @messages=Message.showing.where(" (messages.id = ? or parent_id =?) and((sender_id=? and status in ('b','r')) or (sender_id=? and status in ('b','s')))",parentmessage.id,parentmessage.id, session[:user_id], @message.sender_id ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
+       @messages=Message.showing.where("(messages.updated_at<=?)and (messages.id = ? or parent_id =?) and((sender_id=? and status in ('b','r')) or (sender_id=? and status in ('b','s')))",@message.updated_at,parentmessage.id,parentmessage.id, session[:user_id], @message.sender_id ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
     end  
    
     respond_to do |format|

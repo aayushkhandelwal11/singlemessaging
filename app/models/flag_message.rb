@@ -6,17 +6,17 @@ class FlagMessage < ActiveRecord::Base
   
   after_save :change_flagged_status
   after_create :change_flagged_status
-  after_destroy :change_flagged_status
+  before_destroy :change_flagged_status
   private 
    def change_flagged_status
      
       
      if FlagMessage.find_all_by_message_id(self.message_id).count > 1
        
-       self.message.flagged=true
+       self.message.flagged =true
      else
        
-       self.message.flagged=false
+       self.message.flagged =false
      end
      self.message.save
      messages = Message.find_all_by_parent_id(self.message.id)
