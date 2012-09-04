@@ -15,10 +15,10 @@ class Message < ActiveRecord::Base
   validates :sender_id, :presence=> true
 
   #scope :find_related_message
+  scope :listing, order('messages.updated_at DESC').select("messages.id , sender_id , messages.updated_at , subject")
   scope :showing, includes(:sender,:assets).order('messages.created_at DESC').select(" messages.id , sender_id , messages.created_at , content , subject ")
   scope :sent, where('r.status !="d"')
-  scope :ordering_by_updated_at, order('messages.updated_at DESC')
-  scope :isparent, where('parent_id = 0')
+  #scope :isparent, where('parent_id = 0')
   scope :join_with_receiver, joins("inner join receivers as r on r.message_id =messages.id")
   
   

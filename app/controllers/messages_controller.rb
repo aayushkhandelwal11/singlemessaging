@@ -2,7 +2,7 @@ class MessagesController < ApplicationController
   autocomplete :user, :name
   
   def outbox
-    @messages = Message.includes(:sender).ordering_by_updated_at.select("messages.id , sender_id , messages.updated_at , subject").sent.where("sender_id= ?",session[:user_id]).join_with_receiver.group("parent_id,messages.id").page(params[:page]).per(5)
+    @messages = Message.includes(:sender).listing.sent.where("sender_id= ?",session[:user_id]).join_with_receiver.group("parent_id").page(params[:page]).per(5)
     respond_to do |format|
       format.html
       format.json { render json: @messages }
@@ -20,8 +20,9 @@ class MessagesController < ApplicationController
     @message.content = params[:message][:content]
     @message.subject = params[:message][:subject]
     #@message.assets = params[:message][:assets]
-    @message.parent_id = 0
+    @message.parent_id = @message.id
     @message.save
+   
     @message.receivers.each do |receiver|
       if params[:commit]=="send"
         receiver.status="b"
@@ -41,7 +42,7 @@ class MessagesController < ApplicationController
   end
   
   def index
-    @messages=Message.includes(:sender,:receivers).ordering_by_updated_at.select("messages.id , sender_id , messages.updated_at , subject").sent.where("r.user_id =?",session[:user_id]).join_with_receiver.group("parent_id,messages.id").page(params[:page]).per(5)
+    @messages=Message.includes(:sender,:receivers).listing.sent.where("r.user_id =?",session[:user_id]).join_with_receiver.group("parent_id").page(params[:page]).per(5)
      
     respond_to do |format|
       format.html 
@@ -50,7 +51,7 @@ class MessagesController < ApplicationController
   end
  
   def draft_index
-    @messages=Message.includes(:sender).ordering_by_updated_at.select("messages.id,sender_id,messages.updated_at,subject").where("r.status='d' and sender_id =?",session[:user_id]).join_with_receiver.group("messages.id").page(params[:page]).per(5)
+    @messages=Message.includes(:sender).listing.where("r.status='d' and sender_id =?",session[:user_id]).join_with_receiver.group("messages.id").page(params[:page]).per(5)
     respond_to do |format|
       format.html
       format.json { render json: @messages }
@@ -67,9 +68,6 @@ class MessagesController < ApplicationController
 
   def flag
     @message=Message.find session[:message_id]
-    if @message.parent_id!=0
-      @message=Message.find @message.parent_id
-    end
     count=0 
     if ! FlagMessage.find_by_user_id_and_message_id(session[:user_id],@message.id)
       count=1
@@ -95,15 +93,10 @@ class MessagesController < ApplicationController
   def reply
     @message = Message.new(params[:message])
     @message.sender=User.find session[:user_id]
-    parent_message=Message.find session[:message_id]
-    if parent_message.parent_id!=0
-      @message.parent_id=parent_message.parent_id
-    else
-      @message.parent_id=parent_message.id
-    end 
+    @message.parent_id= session[:message_id]
     @message.save
     parentmessage=Message.find @message.parent_id
-    #parentmessage.updated_at=Time.now
+    parentmessage.updated_at=Time.now
     parentmessage.save
     array_of_user=[]
     if parentmessage.sender_id != session[:user_id]
@@ -120,7 +113,7 @@ class MessagesController < ApplicationController
          @receiver.status="d"
       end   
       @receiver.user=User.find (num)
-      @receiver.message =@message
+      @receiver.message = @message
       if @receiver.save && @receiver.status == "b" 
          if @receiver.user.notification == "1"
            Notifier.gmail_message(@message.sender,@receiver.user).deliver   
@@ -140,33 +133,29 @@ class MessagesController < ApplicationController
   
   
   def show
-    @message = Message.find(params[:id])   
-    session[:message_id]=params[:id]
+    message = Message.find (params[:id])   
+    parentmessage=Message.find message.parent_id
+    session[:message_id]=parentmessage.id
     name=(User.find session[:user_id]).name
-    parentmessage=Message.new
-    if @message.parent_id!=0
-      parentmessage=Message.find @message.parent_id
-    else
-      parentmessage=Message.find params[:id]
-    end  
+    @sender=parentmessage.sender.name
     # changing the read 
     @receivers=Receiver.find_all_by_user_id(session[:user_id])
     @receivers.each do |receiver|
-        if receiver.message_id = parentmessage.id ||receiver.message.parent_id =parentmessage.id 
-           receiver.read=true;
-           receiver.save
-        end
+      if receiver.message.parent_id =parentmessage.parent_id 
+        receiver.read=true;
+        receiver.save
+      end
     end
     if parentmessage.sender_id == session[:user_id]
-       @sender=name
-       @receiver=User.select("u.name").where("r.message_id= ?",params[:id]).join_with_receiver.collect(&:name).join(', ')
        
-       @messages=Message.showing.where("(messages.updated_at <= ?) and (messages.id =? or parent_id =?) and (( sender_id=? and status in ('b','r')) or (sender_id !=? and status in ('b','s')))",@message.updated_at,parentmessage.id,parentmessage.id,session[:user_id],session[:user_id] ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
+       @receiver=User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
+       
+       @messages=Message.showing.where("(parent_id =?) and (( sender_id=? and status in ('b','r')) or (sender_id !=? and status in ('b','s')))",parentmessage.id,session[:user_id],session[:user_id] ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
     else
        @receiver=name
-       @sender=@message.sender.name
+      
        
-       @messages=Message.showing.where("(messages.updated_at<=?)and (messages.id = ? or parent_id =?) and((sender_id=? and status in ('b','r')) or (sender_id=? and status in ('b','s')))",@message.updated_at,parentmessage.id,parentmessage.id, session[:user_id], @message.sender_id ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
+       @messages=Message.showing.where("(parent_id =?) and((sender_id=? and status in ('b','r')) or (sender_id=? and status in ('b','s')))",parentmessage.id, session[:user_id], parentmessage.sender_id ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
     end  
    
     respond_to do |format|
@@ -199,6 +188,7 @@ class MessagesController < ApplicationController
       @message.parent_id=0
       @message.subject=params[:message][:subject]
       @message.save
+      @message.update_attribute(:parent_id , @message.id)
       array_of_user.each do |num|
         @receiver = Receiver.new
           if params[:commit]=="send"
@@ -264,9 +254,9 @@ class MessagesController < ApplicationController
       end
       receiver.save          
    end
-    respond_to do |format|
-      format.html { redirect_to request.referrer }
-      format.json { head :no_content }
-    end
+   respond_to do |format|
+     format.html { redirect_to request.referrer }
+     format.json { head :no_content }
+   end
   end
 end
