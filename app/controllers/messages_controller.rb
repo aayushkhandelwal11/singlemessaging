@@ -102,22 +102,8 @@ class MessagesController < ApplicationController
     else
        array_of_user = Receiver.find_all_by_message_id(session[:message_id]).collect(&:user_id)
     end
-    array_of_user.each do |num|
-      @receiver = Receiver.new
-      if params[:commit] == "send"
-         @receiver.status = "b"
-         @receiver.read = 'false'
-      else
-         @receiver.status = "d"
-      end   
-      @receiver.user = User.find (num)
-      @receiver.message = @message
-      if @receiver.save && @receiver.status == "b" 
-         if @receiver.user.notification == "1"
-           Notifier.gmail_message(@message.sender,@receiver.user).deliver   
-         end
-      end    
-    end
+    create_receivers(array_of_user,@message,"reply")
+
     respond_to do |format|
       if @message.save
         format.html { redirect_to request.referrer, notice: 'Replied' }
@@ -169,6 +155,29 @@ class MessagesController < ApplicationController
       format.json { render json: @message }
     end
   end
+  def create_receivers(array_of_users,message,received)
+    array_of_users.each do |num|
+      @receiver = Receiver.new
+      if params[:commit] == "send"
+        @receiver.status = "b"
+        @receiver.read = 'false'
+      else
+        @receiver.status = "d"
+      end   
+      if received != "reply"
+        @receiver.user = User.find_by_name(num)
+      else
+        @receiver.user = User.find num 
+      end  
+        @receiver.message = message
+      if @receiver.save && @receiver.status == "b" 
+        if @receiver.user.notification == "1"
+          Notifier.gmail_message(message.sender,@receiver.user).deliver   
+        end
+      end  
+      
+    end    
+  end
 
   def create
     array_of_id = [] 
@@ -182,23 +191,7 @@ class MessagesController < ApplicationController
       @message.subject = params[:message][:subject]
       @message.save
       @message.update_attribute(:parent_id , @message.id)
-      array_of_user.each do |num|
-        @receiver = Receiver.new
-          if params[:commit] == "send"
-            @receiver.status = "b"
-            @receiver.read = 'false'
-          else
-            @receiver.status = "d"
-          end   
-        @receiver.user = User.find_by_name(num)
-        @receiver.message = @message
-        if @receiver.save && @receiver.status == "b" 
-          if @receiver.user.notification == "1"
-            Notifier.gmail_message(@message.sender,@receiver.user).deliver   
-          end
-        end  
-      
-      end
+      create_receivers(array_of_user, @message, "create")
     end  
     respond_to do |format|
       if  count == 1 && @message.save
