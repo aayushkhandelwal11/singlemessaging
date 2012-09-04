@@ -9,21 +9,18 @@ class FlagMessage < ActiveRecord::Base
   before_destroy :change_flagged_status
   private 
    def change_flagged_status
-     
-      
      if FlagMessage.find_all_by_message_id(self.message_id).count > 1
-       
-       self.message.flagged =true
+      self.message.flagged = true
      else
        
-       self.message.flagged =false
+       self.message.flagged = false
      end
      self.message.save
+     # do it in 1 query
      messages = Message.find_all_by_parent_id(self.message.id)
      messages.each do |message|
-         message.flagged=self.message.flagged
+         message.flagged = self.message.flagged
          message.save   
      end 
    end
-  # We would need a callback here so that we can mark and unmark the message as flagged
 end

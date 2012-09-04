@@ -14,7 +14,7 @@
   <tr> 
     <td><%= message.subject %></td>
     <td><%= message.updated_at.ctime %></td>
-    <td><%= link_to 'edit' ,edit_draft_message_url(message.id)%></td>
+    <td><%= link_to 'edit' ,edit_message_url(message.id)%></td>
     <td><%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>

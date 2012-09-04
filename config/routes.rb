@@ -1,23 +1,17 @@
 Singlemessaging::Application.routes.draw do
 
-
- #fix: use resource as much as possible.
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"
- 
-  
-  
-  #match "/reply" => "messages#reply", :as => "reply",:via => "get"
-  resources :messages, :except => [:edit, :update] do
+
+  resources :messages, :except => [ :update] do
     member do
       get :downloads
-      get :edit_draft
     end
    
     collection do
       get :reply
-      get :draft_index
+      get :drafts
       get :outbox
       put :flag
       put :send_draft  
