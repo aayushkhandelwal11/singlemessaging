@@ -3,7 +3,7 @@
 <%end%>
 <fieldset id="outer">
 <legend>Draft</legend>
-<%= form_for @message, :html => {:multipart => true} ,:url => send_draft_url, :method =>"put" do |f| %>
+<%= form_for @message, :html => {:multipart => true} ,:url => send_draft_messages_url, :method =>"put" do |f| %>
 
  To: <% for receiver in @message.receivers %>
           <%=receiver.user.name%>

@@ -11,7 +11,7 @@ class MessagesController < ApplicationController
   
   def edit_draft
     @message = Message.includes(:receivers).find(params[:id])
-    session[:edit_message]=@message.id
+    session[:edit_message]=params[:id]
   end
   
   def send_draft
@@ -19,7 +19,7 @@ class MessagesController < ApplicationController
     #@message1 = Message.new(params[:message])
     @message.content = params[:message][:content]
     @message.subject = params[:message][:subject]
-    @message.assets = params[:message][:assets]
+    #@message.assets = params[:message][:assets]
     @message.parent_id = 0
     @message.save
     @message.receivers.each do |receiver|
@@ -143,15 +143,16 @@ class MessagesController < ApplicationController
     @message = Message.find(params[:id])   
     session[:message_id]=params[:id]
     name=(User.find session[:user_id]).name
+    parentmessage=Message.new
     if @message.parent_id!=0
       parentmessage=Message.find @message.parent_id
     else
-      parentmessage=@message
+      parentmessage=Message.find params[:id]
     end  
     # changing the read 
     @receivers=Receiver.find_all_by_user_id(session[:user_id])
     @receivers.each do |receiver|
-        if receiver.message.id = parentmessage.id ||receiver.message.parent_id=parentmessage.id 
+        if receiver.message_id = parentmessage.id ||receiver.message.parent_id =parentmessage.id 
            receiver.read=true;
            receiver.save
         end

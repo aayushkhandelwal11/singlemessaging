@@ -6,27 +6,34 @@ Singlemessaging::Application.routes.draw do
   get "sessions/create"
   get "sessions/destroy"
  
-  match "/downloads/:id" => "messages#downloads", :as => "downloads",:via => "get"
-  match "/draft_index" => "messages#draft_index", :as => "draft_index",:via => "get"
-  match "/reply" => "messages#reply", :as => "reply",:via => "get"
-  match "/flag" => "messages#flag", :as => "flag",:via => "put"
-  match "/outbox" => "messages#outbox", :as => "outbox",:via => "get"
-  match "/edit_draft/:id" => "messages#edit_draft", :as => "edit_draft",:via => "get"
-  match "/send_draft" => "messages#send_draft", :as => "send_draft",:via => "put"
+  
+  
+  #match "/reply" => "messages#reply", :as => "reply",:via => "get"
   resources :messages, :except => [:edit, :update] do
-    member do 
+    member do
       get :downloads
+      get :edit_draft
     end
-  end
+   
+    collection do
+      get :reply
+      get :draft_index
+      get :outbox
+      put :flag
+      put :send_draft  
+    end 
+  end 
 
-  match "/change_avatar" => "users#change_avatar", :as => "change_avatar",:via => "get"
-  match "/update_picture" => "users#update_picture", :as => "update_picture",:via => "put"
-  match "/change_notification" => "users#change_notification", :as => "change_notification",:via => "get"
-  match "/update_notification" => "users#update_notification", :as => "update_notification",:via => "put"
-  match "/user_verify" => "users#user_verify", :as => "user_verify",:via => "get"
-  match "/send_password" => "users#send_password", :as => "send_password",:via => "get"
-  resources :users do
+  resources :users, :except => [:destroy] do
      get :autocomplete_user_name,:on => :collection
+    collection do   
+      get :change_avatar 
+      put :update_picture
+      get :change_notification 
+      put :update_notification
+      get :user_verify 
+      get :send_password
+    end 
   end
   
 	controller :sessions do

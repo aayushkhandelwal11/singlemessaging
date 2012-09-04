@@ -37,6 +37,7 @@ module Singlemessaging
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
+    config.filter_parameters += [:old]
     config.filter_parameters += [:password]
 
     # Enable escaping HTML in JSON.
