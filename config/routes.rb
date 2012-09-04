@@ -24,7 +24,7 @@ Singlemessaging::Application.routes.draw do
     end 
   end 
 
-  resources :users, :except => [:destroy] do
+  resources :users, :except => [:destroy, :show, :index] do
      get :autocomplete_user_name,:on => :collection
     collection do   
       get :change_avatar 

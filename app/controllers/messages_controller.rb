@@ -103,7 +103,6 @@ class MessagesController < ApplicationController
        array_of_user = Receiver.find_all_by_message_id(session[:message_id]).collect(&:user_id)
     end
     create_receivers(array_of_user,@message,"reply")
-
     respond_to do |format|
       if @message.save
         format.html { redirect_to request.referrer, notice: 'Replied' }
@@ -114,7 +113,6 @@ class MessagesController < ApplicationController
       end
     end
   end
-  
   
   def show
     message = Message.find (params[:id])   
@@ -175,7 +173,6 @@ class MessagesController < ApplicationController
           Notifier.gmail_message(message.sender,@receiver.user).deliver   
         end
       end  
-      
     end    
   end
 

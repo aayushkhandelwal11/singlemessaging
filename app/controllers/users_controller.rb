@@ -3,11 +3,7 @@ class UsersController < ApplicationController
   skip_before_filter :authorize, only: [:create,:new,:user_verify,:send_password]
   
   autocomplete :user, :name
-  
-  def index
-    redirect_to inbox_url
-  end
-  
+   
   def change_avatar
     @user = User.find(session[:user_id])
   end
@@ -40,14 +36,6 @@ class UsersController < ApplicationController
    end 
   end
 
-  def show
-    @user = User.find(params[:id])
-    respond_to do |format|
-      format.html
-      format.json { render json: @user }
-    end
-  end
- 
   def new
     @user = User.new
     respond_to do |format|
@@ -78,7 +66,7 @@ class UsersController < ApplicationController
     @user = User.find(session[:user_id])
     respond_to do |format|
       if params[:user] != nil && @user.update_attribute(:notification, params[:user][:notification])
-        format.html { redirect_to inbox_url,notice: "User #{@user.name} was successfully updated." }
+        format.html { redirect_to inbox_url, notice: "User #{@user.name} was successfully updated." }
         format.json { head :no_content }
       else
         format.html { render action: "change_notification", notice: "Somethong went wrong ."  }
