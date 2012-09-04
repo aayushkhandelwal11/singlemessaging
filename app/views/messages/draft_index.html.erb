@@ -1,5 +1,5 @@
 <% if notice !=nil %>
-<p id="notice"><%= notice %></p>
+  <p id="notice"><%= notice %></p>
 <%end%>
 <h1>Listing Drafts</h1>
 <%= paginate @messages %>
@@ -10,18 +10,13 @@
     <th></th>
     <th></th>
   </tr>
-
 <% @messages.each do |message| %>
+  <tr> 
     <td><%= message.subject %></td>
     <td><%= message.updated_at.ctime %></td>
     <td><%= link_to 'edit' ,edit_draft_message_url(message.id)%></td>
     <td><%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-
-    
-</tr>
+  </tr>
 <% end %>
 </table>
-
 <br />
-
-

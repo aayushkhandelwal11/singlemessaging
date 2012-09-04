@@ -1,28 +1,24 @@
 <% if notice !=nil %>
-<p id="notice"><%= notice %></p>
+ <p id="notice"><%= notice %></p>
 <%end%>
 <fieldset id="outer">
 <legend>Draft</legend>
-<%= form_for @message, :html => {:multipart => true} ,:url => send_draft_messages_url, :method =>"put" do |f| %>
+  <%= form_for @message, :html => {:multipart => true} ,:url => send_draft_messages_url, :method =>"put" do |f| %>
 
- To: <%=@receivers%>  
-
+   To: <%=@receivers%>  
    <div class="field">
      <%= f.label :subject %>&nbsp;&nbsp;
      <%= f.text_field :subject,:size=> 70 %>
    </div>
-
    <div class="field">
     <%= f.label :content %><br />
     <%= f.text_area :content,:cols=>116,:rows=>6 %>
-  </div>
+    </div>
     <% for asset in @message.assets %>
        <%=link_to asset.document_file_name , downloads_message_url(asset.id) %> <br>
     <%end%>
-  <%= f.submit 'send', :class => "create" %>
-  <%= f.submit 'save to drafts', :class => "create" %>
- 
-
-<% end %>
+    <%= f.submit 'send', :class => "create" %>
+    <%= f.submit 'save to drafts', :class => "create" %>
+  <% end %>
 </fieldset>
 <%= link_to 'Back', messages_path %>

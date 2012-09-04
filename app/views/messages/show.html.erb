@@ -1,26 +1,29 @@
 <% if notice !=nil %>
-<p id="notice"><%= notice %></p>
+  <p id="notice"><%= notice %></p>
 <%end%>
- 
 <h4> From <%=@sender%><br>
-
-To <%=@receiver%>
+  To <%=@receiver%>
 </h4>
 <div id="right">
-<%= button_to 'Flag', flag_messages_url, method: "put", :class =>"create" %>
+  <%= button_to 'Flag', flag_messages_url, method: "put", :class =>"create" %>
 </div>
 <%= paginate @messages %>
 
 <% @messages.each do |message| %>
-    
-    <fieldset id="<%= cycle('odd', 'even') %>">
+  <fieldset id="<%= cycle('odd', 'even') %>">
     <table>
-    
-    <tr><td> <h4>From</h4></td><td><h4><%= message.sender.name %></h4></td></tr>
-    <tr><td> Subject</td><td><%= message.subject %></td></tr>
+      <tr>
+        <td> <h4>From</h4></td>
+        <td><h4><%= message.sender.name %></h4></td>
+      </tr>
+      <tr>
+        <td> Subject</td>
+        <td><%= message.subject %></td>
+      </tr>
     </table>
-    <div id="right"><%= message.created_at.ctime %></div>
-    <content>
+    <div id="right">
+      <%= message.created_at.ctime %>
+    </div>
     content
     <div id="box">
     <%= message.content %>
@@ -30,21 +33,20 @@ To <%=@receiver%>
        <%=link_to asset.document_file_name , downloads_message_url(asset.id) %> <br>
     <%end%> 
     <%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %>
-    </table>
-    </fieldset> 
     
+  </fieldset> 
 <% end %>
-
-
 <br />
 <button id="buttonreply" class="create">Reply</button>
-<%= form_for @message, :html => {:multipart => true} ,:url => {:action => "reply",:multipart => true }, :method => "get"  do |f| %>
+
 
 <div id="replying" >
 
   <fieldset id="outer">
-   <%= render "form",:html => {:multipart => true}%>
+   <%= form_for @message, :html => {:multipart => true} ,:url => {:action => "reply" }, :method => "get"  do |f| %>
+     <%= render "form"%>
+   <%end%>
   </fieldset>
  
 </div>
-<%end%>
+

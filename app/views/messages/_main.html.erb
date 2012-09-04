@@ -12,6 +12,7 @@
   <tr class="read">
   <% for receiver in message.receivers %>
         <% if receiver.user_id == session[:user_id] && !receiver.read %>
+           
            <tr class="unread">
         <%end%>
     <%end%>  
