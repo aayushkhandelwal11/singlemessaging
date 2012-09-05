@@ -123,9 +123,9 @@ class MessagesController < ApplicationController
     session[:message_id] = parentmessage.id
     @sender = parentmessage.sender.name
     # changing the read 
-    @receivers = Receiver.find_all_by_user_id(session[:user_id])
+    @receivers = message.receivers.find_all_by_user_id(session[:user_id])
     @receivers.each do |receiver|
-      if receiver.message.parent_id = parentmessage.parent_id 
+      if receiver.message.parent_id == parentmessage.parent_id 
         receiver.read = true;
         receiver.save
       end
@@ -133,11 +133,12 @@ class MessagesController < ApplicationController
     if parentmessage.sender_id == session[:user_id]
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
        
-       @messages = Message.showing.where("(parent_id =?) and (( sender_id=? and status in ('b','r')) or (sender_id !=? and status in ('b','s')))",parentmessage.id,session[:user_id],session[:user_id] ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
+       @messages = Message.showing_to_sender(parentmessage,parentmessage.sender).page(params[:page]).per(3)
     
     else
-       @receiver = (User.find session[:user_id]).name
-       @messages = Message.showing.where("(parent_id =?) and((sender_id=? and status in ('b','r')) or (sender_id=? and status in ('b','s')))",parentmessage.id, session[:user_id], parentmessage.sender_id ).join_with_receiver.group("messages.id").page(params[:page]).per(3)
+       receiver_user = User.find session[:user_id]
+       @receiver=receiver_user.name
+       @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user).page(params[:page]).per(3)
     end  
    
     respond_to do |format|
@@ -161,10 +162,10 @@ class MessagesController < ApplicationController
     array_of_users.each do |num|
       @receiver = Receiver.new
       if params[:commit] == "send"
-        @receiver.status = MESSAGE_STATUS["AvailableBoth"]
+        @receiver.status = Message::MESSAGE_STATUS["AvailableBoth"]
         @receiver.read = 'false'
       else
-        @receiver.status = MESSAGE_STATUS["Drafts"]
+        @receiver.status = Message::MESSAGE_STATUS["Drafts"]
       end   
       if received != "reply"
         @receiver.user = User.find_by_name(num)
@@ -172,7 +173,7 @@ class MessagesController < ApplicationController
         @receiver.user = User.find(num) 
       end  
         @receiver.message = message
-      if @receiver.save && @receiver.status == MESSAGE_STATUS["AvailableBoth"] 
+      if @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
         if @receiver.user.notification == "1"
           Notifier.gmail_message(message.sender,@receiver.user).deliver   
         end
@@ -221,23 +222,23 @@ class MessagesController < ApplicationController
     if @message.sender_id == session[:user_id]
        receivers=Receiver.find_all_by_message_id(params[:id])
        receivers.each do |receiver|
-         if receiver.status == MESSAGE_STATUS["Drafts"]
+         if receiver.status == Message::MESSAGE_STATUS["Drafts"]
             @message.destroy
             break;        
-         elsif receiver.status == MESSAGE_STATUS["AvailableBoth"]
-             receiver.status = MESSAGE_STATUS["SenderDelete"]
+         elsif receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]
+             receiver.status = Message::MESSAGE_STATUS["SenderDelete"]
              receiver.save
-         elsif receiver.status == MESSAGE_STATUS["ReceiverDelete"]
-             receiver.status = MESSAGE_STATUS["BothDelete"]
+         elsif receiver.status == Message::MESSAGE_STATUS["ReceiverDelete"]
+             receiver.status = Message::MESSAGE_STATUS["BothDelete"]
              receiver.save
          end
        end          
    else
       receiver=Receiver.find_by_message_id_and_user_id(params[:id],session[:user_id])
-      if receiver.status == MESSAGE_STATUS["AvailableBoth"]
-          receiver.status = MESSAGE_STATUS["ReceiverDelete"]
-      elsif receiver.status == MESSAGE_STATUS["SenderDelete"]
-          receiver.status = MESSAGE_STATUS["BothDelete"]
+      if receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]
+          receiver.status = Message::MESSAGE_STATUS["ReceiverDelete"]
+      elsif receiver.status == Message::MESSAGE_STATUS["SenderDelete"]
+          receiver.status = Message::MESSAGE_STATUS["BothDelete"]
       end
       receiver.save          
    end
