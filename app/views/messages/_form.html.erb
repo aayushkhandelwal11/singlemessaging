@@ -1,4 +1,4 @@
-<%= form_for @message, :html => {:multipart => true} do |f| %>
+<%#= form_for @message, :html => {:multipart => true} do |f| %>
   <div class="field">
     <%= f.label :subject %>&nbsp;&nbsp;
     <%= f.text_field :subject,:size=> 70 %>
@@ -14,5 +14,5 @@
    <% end %>
   <%= f.submit 'send', :class => "create" %>
   <%= f.submit 'save to drafts', :class => "create" %> 
-<% end %>
+<%# end %>
   

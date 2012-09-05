@@ -11,8 +11,10 @@ class MessagesController < ApplicationController
   end
   
   def edit
-   #check belong to user
     @message = Message.includes(:receivers).find(params[:id])
+    if @message.sender_id != session[:user_id]
+       redirect_to inbox_url, notice: 'You are not authorized for this' 
+    end
     session[:edit_message] = params[:id]
     @receivers = ""
     @message.receivers.each do |receiver|
@@ -21,18 +23,21 @@ class MessagesController < ApplicationController
   end
   
   def send_draft
-    #check the owner of the message
     @message = Message.find(session[:edit_message])
+    if @message.sender_id != session[:user_id]
+       redirect_to inbox_url, notice: 'You are not authorized for this' 
+    end
     @message.content = params[:message][:content]
     @message.subject = params[:message][:subject]
-    @message.parent_id = @message.id
+    #@message.parent_id = @message.id
+    @message.created_at=Time.now
+    @message.updated_at=Time.now
     @message.save
     @message.receivers.each do |receiver|
-      #chenge the status in model by using hash
       if params[:commit] == "send"
-        receiver.status = "b"
+        receiver.status = Message::MESSAGE_STATUS["AvailableBoth"]
       else
-        receiver.status = "d"
+        receiver.status = Message::MESSAGE_STATUS["Draft"]
       end 
       receiver.save
     end
@@ -47,7 +52,7 @@ class MessagesController < ApplicationController
   end
   
   def index
-    #move this to model
+    
     user=User.find(session[:user_id])
     @messages = Message.inbox(user).page(params[:page]).per(5)
      
@@ -58,7 +63,6 @@ class MessagesController < ApplicationController
   end
  
   def drafts
-    # move to models
     user=User.find(session[:user_id])
     @messages = Message.drafts(user).page(params[:page]).per(5)
     respond_to do |format|
@@ -132,7 +136,6 @@ class MessagesController < ApplicationController
     end
     if parentmessage.sender_id == session[:user_id]
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
-       
        @messages = Message.showing_to_sender(parentmessage,parentmessage.sender).page(params[:page]).per(3)
     
     else
@@ -140,10 +143,9 @@ class MessagesController < ApplicationController
        @receiver=receiver_user.name
        @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user).page(params[:page]).per(3)
     end  
-   
+    @message = Message.new
+    3.times { @message.assets.build}
     respond_to do |format|
-      @message = Message.new
-       3.times { @message.assets.build}
       format.html
       format.json { render json: @messages }
     end
@@ -165,7 +167,7 @@ class MessagesController < ApplicationController
         @receiver.status = Message::MESSAGE_STATUS["AvailableBoth"]
         @receiver.read = 'false'
       else
-        @receiver.status = Message::MESSAGE_STATUS["Drafts"]
+        @receiver.status = Message::MESSAGE_STATUS["Draft"]
       end   
       if received != "reply"
         @receiver.user = User.find_by_name(num)
@@ -222,7 +224,7 @@ class MessagesController < ApplicationController
     if @message.sender_id == session[:user_id]
        receivers=Receiver.find_all_by_message_id(params[:id])
        receivers.each do |receiver|
-         if receiver.status == Message::MESSAGE_STATUS["Drafts"]
+         if receiver.status == Message::MESSAGE_STATUS["Draft"]
             @message.destroy
             break;        
          elsif receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]

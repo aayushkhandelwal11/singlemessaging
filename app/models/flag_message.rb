@@ -16,11 +16,6 @@ class FlagMessage < ActiveRecord::Base
        self.message.flagged = false
      end
      self.message.save
-     # do it in 1 query
-     messages = Message.find_all_by_parent_id(self.message.id)
-     messages.each do |message|
-         message.flagged = self.message.flagged
-         message.save   
-     end 
+     Message.where('parent_id =?',self.message.id).update_all(:flagged => self.message.flagged)
    end
 end

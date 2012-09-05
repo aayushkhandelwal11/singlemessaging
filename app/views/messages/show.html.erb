@@ -43,8 +43,9 @@
 <div id="replying" >
 
   <fieldset id="outer">
-   <%= form_for @message, :html => {:multipart => true} ,:url => {:action => "reply" }, :method => "get"  do |f| %>
-     <%= render "form"%>
+   <%= form_for @message,:url => reply_messages_url,:multipart => true, :method => "get"  do |f| %>
+     <%= render :partial => 'form',
+           :locals => {:f => f}%>
    <%end%>
   </fieldset>
 </div>
