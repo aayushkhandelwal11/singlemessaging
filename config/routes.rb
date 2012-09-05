@@ -3,14 +3,14 @@ Singlemessaging::Application.routes.draw do
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"
-
+  match "/reply" => "messages#reply", :as =>"reply", :via =>"post"
   resources :messages, :except => [ :update] do
     member do
       get :downloads
     end
    
     collection do
-      get :reply
+     # post :reply
       get :drafts
       get :outbox
       put :flag

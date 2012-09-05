@@ -111,8 +111,8 @@ class MessagesController < ApplicationController
     end
     create_receivers(array_of_user,@message,"reply")
     respond_to do |format|
-      if @message.save
-        format.html { redirect_to request.referrer, notice: 'Replied' }
+      if true
+        format.html { redirect_to request.referrer, notice: "Replied " }
         format.json { render json: @message, status: :created, location: @message }
       else
         format.html { redirect_to message_url, notice: 'Something went wrong' }
@@ -202,7 +202,7 @@ class MessagesController < ApplicationController
         if params[:commit] != "send"
             format.html { redirect_to inbox_url, notice: 'Message was Saved in drafts' }
         else
-            format.html { redirect_to inbox_url, notice: 'Message was Send' }
+            format.html { redirect_to inbox_url, notice: "Message was Send #{params}" }
         end
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0

@@ -15,15 +15,15 @@ class Message < ActiveRecord::Base
   
   
   validates :sender_id, :presence=> true
-  scope :inbox, lambda{ |user| includes(:sender,:receivers).listing.sent.where("r.user_id =? ",user.id).join_with_receiver.group("parent_id") }
+  scope :inbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("r.user_id =? ",user.id).join_with_receiver.group("parent_id") }
   
-  scope :outbox, lambda{ |user| includes(:sender,:receivers).listing.sent.where("sender_id =? ",user.id).join_with_receiver.group("parent_id") }
+  scope :outbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("sender_id =? ",user.id).join_with_receiver.group("parent_id") }
   
-  scope :drafts, lambda{ |user| includes(:sender,:receivers).listing.where("sender_id =? and r.status = ?",user.id,MESSAGE_STATUS["Draft"]).join_with_receiver.group("parent_id") }
+  scope :drafts, lambda{ |user| includes(:sender, :receivers).listing.where("sender_id = ? and r.status = ?", user.id, MESSAGE_STATUS["Draft"]).join_with_receiver.group("parent_id") }
   
-  scope :showing_to_sender, lambda { |parentmessage,owner| includes(:sender,:assets).showing.where("(parent_id =?) and (( sender_id=? and status in (1,3)) or (sender_id !=? and status in (1,2)))",parentmessage.id,owner.id,owner.id ).join_with_receiver.group("messages.id")
+  scope :showing_to_sender, lambda { |parentmessage, owner| includes(:sender, :assets).showing.where("(parent_id =?) and (( sender_id = ? and status in (1, 3)) or (sender_id != ? and status in (1, 2)))",parentmessage.id, owner.id, owner.id ).join_with_receiver.group("messages.id")
  }
-   scope :showing_to_receiver, lambda { |parentmessage,owner,receiver| includes(:sender,:assets).showing.where("(parent_id =?) and (( sender_id=? and status in (1,2)) or (sender_id =? and status in (1,3)))",parentmessage.id,owner.id,receiver.id ).join_with_receiver.group("messages.id")
+   scope :showing_to_receiver, lambda { |parentmessage, owner, receiver| includes(:sender,:assets).showing.where("(parent_id = ?) and (( sender_id = ? and status in (1, 2)) or (sender_id =? and status in (1, 3)))",parentmessage.id,owner.id,receiver.id ).join_with_receiver.group("messages.id")
  }
 
   scope :listing, order('messages.updated_at DESC').select("messages.id , sender_id , messages.updated_at , subject")
@@ -32,7 +32,7 @@ class Message < ActiveRecord::Base
 
   scope :sent, where('r.status !=?',MESSAGE_STATUS["Draft"])
 
-  scope :join_with_receiver, joins("inner join receivers as r on r.message_id =messages.id")
+  scope :join_with_receiver, joins("inner join receivers as r on r.message_id = messages.id")
   
   
   default_scope where( :flagged => false) 

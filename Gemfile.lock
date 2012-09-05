@@ -48,6 +48,7 @@ GEM
       net-sftp (>= 2.0.0)
       net-ssh (>= 2.0.14)
       net-ssh-gateway (>= 1.1.0)
+    choice (0.1.6)
     cocaine (0.2.1)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
@@ -102,6 +103,11 @@ GEM
       activesupport (= 3.2.7)
       bundler (~> 1.0)
       railties (= 3.2.7)
+    rails-erd (1.0.0)
+      activerecord (>= 3.0)
+      activesupport (>= 3.0)
+      choice (~> 0.1.6)
+      ruby-graphviz (~> 1.0.4)
     rails3-jquery-autocomplete (1.0.7)
       rails (~> 3.0)
     railties (3.2.7)
@@ -128,6 +134,7 @@ GEM
       activesupport (>= 3.0)
       railties (>= 3.0)
       rspec (~> 2.11.0)
+    ruby-graphviz (1.0.8)
     sass (3.1.20)
     sass-rails (3.2.5)
       railties (~> 3.2.0)
@@ -163,6 +170,7 @@ DEPENDENCIES
   kaminari
   paperclip!
   rails (= 3.2.7)
+  rails-erd
   rails3-jquery-autocomplete (~> 1.0.7)
   rspec-rails (>= 2.0.0.beta)
   sass-rails (~> 3.2.3)
