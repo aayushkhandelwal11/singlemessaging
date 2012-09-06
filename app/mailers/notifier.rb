@@ -1,5 +1,5 @@
 class Notifier < ActionMailer::Base
-  default from: "admin<aayush81047626it@gmail.com>"
+  default from: "Messaging App<aayush81047626it@gmail.com>"
 
   # Subject can be set in your I18n file at config/locales/en.yml
   # with the following lookup:

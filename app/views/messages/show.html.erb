@@ -1,11 +1,11 @@
 <% if notice !=nil %>
   <p id="notice"><%= notice %></p>
 <%end%>
-<h4> From <%=@sender%><br>
-  To <%=@receiver%><br>
+<h4> From :&nbsp;&nbsp;&nbsp;<%=@sender%><br>
+  To :&nbsp;&nbsp;&nbsp;<%=@receiver%><br>
 </h4>
 <h5>
-Subject <%=@subject%>
+Subject :&nbsp;<%=@subject%>
 </h5>
 <div id="right">
   <%= button_to 'Flag', flag_messages_url, method: "put", :class =>"create" %>
@@ -16,14 +16,14 @@ Subject <%=@subject%>
   <fieldset id="<%= cycle('odd', 'even') %>">
     <table>
       <tr>
-        <td> <h4>From</h4></td>
+        <td> <h4>From: </h4></td>
         <td> <h4><%= message.sender.name %></h4> </td>
       </tr>
     </table>
     <div id="right">
       <%= message.created_at.ctime %>
     </div>
-    content
+    Message
     <div id="box">
     <%= message.content %>
     </div>
