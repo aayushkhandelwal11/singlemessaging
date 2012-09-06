@@ -1,7 +1,7 @@
 <div class="depot_form">
-  <% if flash[:alert] %>
-    <p id="notice"><%= flash[:alert] %></p>
-  <% end %>
+  <% if notice !=nil %>
+    <p id="notice"><%= notice %></p>
+  <%end%>
  
   <%= form_tag('/sessions/create',:method => :get) do %>
     <fieldset>

@@ -22,6 +22,7 @@ end
 
 group :development, :test do
   gem 'rspec-rails',      ">= 2.0.0.beta"
+  gem 'mocha'
 end
 gem 'jquery-rails'
 gem 'rails-erd'

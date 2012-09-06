@@ -53,7 +53,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         Notifier.welcome_message(@user).deliver
-        format.html { redirect_to inbox_url, notice: 'User #{user.name} was successfully created.' }
+        format.html { redirect_to login_url, notice: "User #{@user.name} was successfully created." }
         format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: "new" }

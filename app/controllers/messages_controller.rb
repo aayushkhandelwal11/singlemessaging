@@ -114,13 +114,17 @@ class MessagesController < ApplicationController
     end
     create_receivers(array_of_user,@message,"reply")
     respond_to do |format|
-      if true
-        format.html { redirect_to request.referrer, notice: "Replied " }
-        format.json { render json: @message, status: :created, location: @message }
-      else
-        format.html { redirect_to message_url, notice: 'Something went wrong' }
-        format.json { render json: @message.errors, status: :unprocessable_entity }
-      end
+       if @message.save
+         if params[:commit] != "send"
+            format.html { redirect_to inbox_url, notice: 'Message was Saved in drafts' }
+         else
+            format.html { redirect_to inbox_url, notice: "Message was Send " }
+         end
+         format.json { render json: @message, status: :created, location: @message }
+       else
+         format.html { redirect_to message_url, notice: 'Something went wrong' }
+         format.json { render json: @message.errors, status: :unprocessable_entity }
+       end
     end
   end
   
@@ -129,6 +133,7 @@ class MessagesController < ApplicationController
     parentmessage = Message.find message.parent_id
     session[:message_id] = parentmessage.id
     @sender = parentmessage.sender.name
+    @subject=parentmessage.subject
     # changing the read 
     @receivers = message.receivers.find_all_by_user_id(session[:user_id])
     @receivers.each do |receiver|
@@ -178,7 +183,8 @@ class MessagesController < ApplicationController
         @receiver.user = User.find(num) 
       end  
         @receiver.message = message
-      if @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
+     
+      if @receiver.user != nil && @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
         if @receiver.user.notification == "1"
           Notifier.gmail_message(message.sender,@receiver.user).deliver   
         end
@@ -201,7 +207,7 @@ class MessagesController < ApplicationController
       create_receivers(array_of_user, @message, "create")
     end  
     respond_to do |format|
-      if  count == 1 && @message.save
+      if  count == 1 && @message.save && @message.receivers.count != 0
         if params[:commit] != "send"
             format.html { redirect_to inbox_url, notice: 'Message was Saved in drafts' }
         else
@@ -215,6 +221,9 @@ class MessagesController < ApplicationController
           format.html { redirect_to request.referrer, notice: 'Mention atleast one recepent' }
         end  
         format.json { render json: @message.errors, status: :unprocessable_entity }
+      elsif @message.receivers.count == 0
+         @message.destroy
+         format.html { redirect_to request.referrer, notice: 'Invalid receiver' }
       else
         format.html { render action: "new" }
         format.json { render json: @message.errors, status: :unprocessable_entity }

@@ -2,8 +2,11 @@
   <p id="notice"><%= notice %></p>
 <%end%>
 <h4> From <%=@sender%><br>
-  To <%=@receiver%>
+  To <%=@receiver%><br>
 </h4>
+<h5>
+Subject <%=@subject%>
+</h5>
 <div id="right">
   <%= button_to 'Flag', flag_messages_url, method: "put", :class =>"create" %>
 </div>
@@ -14,11 +17,7 @@
     <table>
       <tr>
         <td> <h4>From</h4></td>
-        <td><h4><%= message.sender.name %></h4></td>
-      </tr>
-      <tr>
-        <td> Subject</td>
-        <td><%= message.subject %></td>
+        <td> <h4><%= message.sender.name %></h4> </td>
       </tr>
     </table>
     <div id="right">

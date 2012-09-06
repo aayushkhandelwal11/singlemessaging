@@ -19,9 +19,11 @@
   <td colspan ='2'>  <%= message.sender.name %></td>
     <td colspan ='2'> 
        <% if message.sender_id == session[:user_id] %>
+         <% r=""%>
          <%for receiver in message.receivers %>
-            <%=receiver.user.name%>,
+            <% r += receiver.user.name + ", "  %>
          <%end%>
+         <%=r[0..-3]%>
        <% else %>
           <%= User.find(session[:user_id]).name %>  
        <%end%>   
