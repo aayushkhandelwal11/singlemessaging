@@ -40,7 +40,7 @@ namespace :deploy do
  after :symlink, :after_symlink
  
  task :after_symlink, :roles => :app do
-   run "cp #{shared_path}/config/database.yml #{current_path}/config/database.yml"
+   run "cp #{shared_path}/database.yml #{current_path}/config/database.yml"
    run "bundle install"
  end
  

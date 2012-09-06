@@ -18,9 +18,13 @@
     <%end%>  
   <td colspan ='2'>  <%= message.sender.name %></td>
     <td colspan ='2'> 
+       <% if message.sender_id == session[:user_id] %>
          <%for receiver in message.receivers %>
             <%=receiver.user.name%>,
          <%end%>
+       <% else %>
+          <%= User.find(session[:user_id]).name %>  
+       <%end%>   
     <td colspan ='2'><%= link_to message.subject, message %></td>
     <td colspan ='2'><%= message.updated_at.ctime %></td>
   </tr>

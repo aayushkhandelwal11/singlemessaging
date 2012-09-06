@@ -14,8 +14,10 @@ class User < ActiveRecord::Base
   #validates_attachment_size :avatar,:less_than => 4.megabytes,:message   => "is too big"
   validates_attachment :avatar, :presence => true
   validates :name, :uniqueness => {:case_sensitive => false}, :presence => true
-  validates :email, :presence=>true, :format => { :with => /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/ },:uniqueness => true  
-  validates :age, :presence=> true, :format => { :with => /^[\d]+$/}
+  validates :email, :presence=>true,:uniqueness => true  
+  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create
+  validates :age, :presence=> true
+  validates_inclusion_of :age, :in => 0..99
   validates_length_of :password, :minimum => 8
   
  

@@ -1,0 +1,22 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: dave
+  email: dave.moore@vinsol.com
+  age: 22
+  password_digest: <%= BCrypt::Password.create('password') %>
+  notification: 1
+  avatar_file_name: "390550_2061284230599_1911003160_n.jpg"
+  avatar_content_type: "image/jpeg"
+  avatar_file_size: 17185
+  avatar_updated_at: "2012-08-31 12:56:18"
+two:
+  name: ram
+  email: ram@vinsol.com
+  age: 23
+  password_digest: <%= BCrypt::Password.create('ramvinsol') %>
+  notification: 3
+  avatar_file_name: "390550_2061284230599_1911003160_n.jpg"
+  avatar_content_type: "image/jpeg"
+  avatar_file_size: 17185
+  avatar_updated_at: "2012-08-31 12:56:18"

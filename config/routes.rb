@@ -8,9 +8,7 @@ Singlemessaging::Application.routes.draw do
     member do
       get :downloads
     end
-   
     collection do
-     # post :reply
       get :drafts
       get :outbox
       put :flag

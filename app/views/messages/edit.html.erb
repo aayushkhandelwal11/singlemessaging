@@ -5,11 +5,8 @@
 <legend>Draft</legend>
   <%= form_for @message, :html => {:multipart => true} ,:url => send_draft_messages_url, :method =>"put" do |f| %>
 
-   To: <%=@receivers%>  
-   <div class="field">
-     <%= f.label :subject %>&nbsp;&nbsp;
-     <%= f.text_field :subject,:size=> 70 %>
-   </div>
+   To: <%=@receivers%>  <br><br>
+   Subject: <%=@message.subject%><br><br>
    <div class="field">
     <%= f.label :content %><br />
     <%= f.text_area :content,:cols=>116,:rows=>6 %>

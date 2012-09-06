@@ -20,6 +20,8 @@ class MessagesController < ApplicationController
     @message.receivers.each do |receiver|
       @receivers = @receivers + receiver.user.name + ", "
     end
+    @receivers=@receivers[0..-3]
+    
   end
   
   def send_draft
@@ -28,7 +30,7 @@ class MessagesController < ApplicationController
        redirect_to inbox_url, notice: 'You are not authorized for this' 
     end
     @message.content = params[:message][:content]
-    @message.subject = params[:message][:subject]
+    #@message.subject = params[:message][:subject]
     #@message.parent_id = @message.id
     @message.created_at=Time.now
     @message.updated_at=Time.now
@@ -99,10 +101,11 @@ class MessagesController < ApplicationController
     @message = Message.new(params[:message])
     @message.sender = User.find session[:user_id]
     @message.parent_id = session[:message_id]
-    @message.save
     parentmessage = Message.find @message.parent_id
     parentmessage.updated_at = Time.now
     parentmessage.save
+    @message.subject=parentmessage.subject
+    @message.save
     array_of_user = []
     if parentmessage.sender_id != session[:user_id]
        array_of_user = [parentmessage.sender_id]
@@ -202,7 +205,7 @@ class MessagesController < ApplicationController
         if params[:commit] != "send"
             format.html { redirect_to inbox_url, notice: 'Message was Saved in drafts' }
         else
-            format.html { redirect_to inbox_url, notice: "Message was Send #{params}" }
+            format.html { redirect_to inbox_url, notice: "Message was Send " }
         end
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0
