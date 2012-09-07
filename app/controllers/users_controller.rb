@@ -53,7 +53,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         Notifier.welcome_message(@user).deliver
-        format.html { redirect_to login_url, notice: "User #{@user.name} was successfully created." }
+        format.html { redirect_to login_path, notice: "User #{@user.name} was successfully created." }
         format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: "new" }
@@ -66,7 +66,7 @@ class UsersController < ApplicationController
     @user = User.find(session[:user_id])
     respond_to do |format|
       if params[:user] != nil && @user.update_attribute(:notification, params[:user][:notification])
-        format.html { redirect_to inbox_url, notice: "User #{@user.name} was successfully updated." }
+        format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated." }
         format.json { head :no_content }
       else
         format.html { render action: "change_notification", notice: "Somethong went wrong ."  }
@@ -79,7 +79,7 @@ class UsersController < ApplicationController
     @user = User.find(session[:user_id])
     respond_to do |format|
       if params[:user] != nil &&  @user.update_attribute(:avatar,params[:user][:avatar])
-        format.html { redirect_to inbox_url,notice: "User #{@user.name} was successfully updated." }
+        format.html { redirect_to inbox_path,notice: "User #{@user.name} was successfully updated." }
         format.json { head :no_content }
       else 
         format.html { render action: "change_avatar" }
@@ -95,7 +95,7 @@ class UsersController < ApplicationController
        @user.password = params[:user][:password]
        @user.password_confirmation = params[:user][:password_confirmation]
        if @user.save
-         format.html { redirect_to inbox_url, notice: "User #{@user.name} was successfully updated." }
+         format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated." }
          format.json { head :no_content }
        else
          format.html { redirect_to edit_user_path(@user.id), notice: "Password is empty or doesnt matches"  }

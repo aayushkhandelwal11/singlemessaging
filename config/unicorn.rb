@@ -1,6 +1,6 @@
 # config/unicorn.rb
 # Set environment to production unless something else is specified
-env = "production"
+ env = "production"
 
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.

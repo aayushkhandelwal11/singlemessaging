@@ -3,7 +3,7 @@
 <%end%>
 <fieldset id="outer">
 <legend>Draft</legend>
-  <%= form_for @message, :html => {:multipart => true} ,:url => send_draft_messages_url, :method =>"put" do |f| %>
+  <%= form_for @message, :html => {:multipart => true} ,:url => send_draft_messages_path, :method =>"put" do |f| %>
 
    To: <%=@receivers%>  <br><br>
    Subject: <%=@message.subject%><br><br>
@@ -12,10 +12,10 @@
     <%= f.text_area :content,:cols=>116,:rows=>6 %>
     </div>
     <% for asset in @message.assets %>
-       <%=link_to asset.document_file_name , downloads_message_url(asset.id) %> <br>
+       <%=link_to asset.document_file_name , downloads_message_path(asset.id) %> <br>
     <%end%>
     <%= f.submit 'send', :class => "create" %>
     <%= f.submit 'save to drafts', :class => "create" %>
   <% end %>
 </fieldset>
-<%= link_to 'Back', drafts_messages_url %>
+<%= link_to 'Back', drafts_messages_path %>

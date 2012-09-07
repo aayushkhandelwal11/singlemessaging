@@ -9,14 +9,14 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:password])
 
       session[:user_id] = user.id
-      redirect_to inbox_url
+      redirect_to inbox_path
     else
-      redirect_to login_url, notice: "Invalid user/password combination"
+      redirect_to login_path, notice: "Invalid user/password combination"
     end
   end
 
   def destroy
     reset_session
-    redirect_to login_url, notice: "Logged out"
+    redirect_to login_path, notice: "Logged out"
   end
 end

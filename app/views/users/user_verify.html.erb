@@ -2,7 +2,7 @@
   <p id="notice"><%= notice %></p>
 <%end%>
 <div class="depot_form">
-  <%= form_for @user,:url => send_password_users_url ,:method =>"get" do |f| %>
+  <%= form_for @user,:url => send_password_users_path ,:method =>"get" do |f| %>
   <fieldset>
     <legend>Enter User Details</legend>
     <table>

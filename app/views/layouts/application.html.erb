@@ -30,22 +30,22 @@
       <ul>
         <% if session[:user_id]==nil %> 
         <li><%= link_to 'New user', new_user_path %></li>
-        <li><%= link_to 'Home', login_url %></li>
-        <li><%= link_to 'Forgot Password', user_verify_users_url %></li>
+        <li><%= link_to 'Home', login_path %></li>
+        <li><%= link_to 'Forgot Password', user_verify_users_path %></li>
         <% else %>
         <% if (User.find session[:user_id]).avatar.exists? %>
           <%= image_tag (User.find session[:user_id]).avatar.url(:small) %>
         <% else %>
           <%= image_tag("no.jpg") %>
         <% end %>
-        <li><%= link_to 'Compose Message', new_message_url %></li>
-        <li><%= link_to 'Inbox', inbox_url %></li>
-        <li><%= link_to 'Outbox', outbox_messages_url %></li>
-        <li><%= link_to 'Drafts',  drafts_messages_url%></li>
-        <li><%= link_to 'Update Avatar', change_avatar_users_url%></li>
-        <li><%= link_to 'Update Notifications', change_notification_users_url%></li>
+        <li><%= link_to 'Compose Message', new_message_path %></li>
+        <li><%= link_to 'Inbox', inbox_path %></li>
+        <li><%= link_to 'Outbox', outbox_messages_path %></li>
+        <li><%= link_to 'Drafts',  drafts_messages_path%></li>
+        <li><%= link_to 'Update Avatar', change_avatar_users_path%></li>
+        <li><%= link_to 'Update Notifications', change_notification_users_path%></li>
         <li><%= link_to 'Update Password', edit_user_path(session[:user_id]) %></li>
-        <li><%= link_to 'Log Out',logout_url,:method=>:delete%></li>
+        <li><%= link_to 'Log Out',logout_path,:method=>:delete%></li>
         <%end%>
       </ul>
     </div>

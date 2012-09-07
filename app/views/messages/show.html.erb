@@ -8,7 +8,7 @@
 Subject :&nbsp;<%=@subject%>
 </h5>
 <div id="right">
-  <%= button_to 'Flag', flag_messages_url, method: "put", :class =>"create" %>
+  <%= button_to 'Flag', flag_messages_path, method: "put", :class =>"create" %>
 </div>
 <%= paginate @messages %>
 
@@ -29,7 +29,7 @@ Subject :&nbsp;<%=@subject%>
     </div>
     <br>
     <% for asset in message.assets %>
-       <%=link_to asset.document_file_name , downloads_message_url(asset.id) %> <br>
+       <%=link_to asset.document_file_name , downloads_message_path(asset.id) %> <br>
     <%end%> 
     <%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %>
     

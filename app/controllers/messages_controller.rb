@@ -13,7 +13,7 @@ class MessagesController < ApplicationController
   def edit
     @message = Message.includes(:receivers).find(params[:id])
     if @message.sender_id != session[:user_id]
-       redirect_to inbox_url, notice: 'You are not authorized for this' 
+       redirect_to inbox_path, notice: 'You are not authorized for this' 
     end
     session[:edit_message] = params[:id]
     @receivers = ""
@@ -27,7 +27,7 @@ class MessagesController < ApplicationController
   def send_draft
     @message = Message.find(session[:edit_message])
     if @message.sender_id != session[:user_id]
-       redirect_to inbox_url, notice: 'You are not authorized for this' 
+       redirect_to inbox_path, notice: 'You are not authorized for this' 
     end
     @message.content = params[:message][:content]
     #@message.subject = params[:message][:subject]
@@ -45,9 +45,9 @@ class MessagesController < ApplicationController
     end
     respond_to do |format| 
       if params[:commit] != "send"
-        format.html { redirect_to inbox_url, notice: 'Message was Saved in drafts' }
+        format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
       else
-        format.html { redirect_to inbox_url, notice: 'Message was Send' }
+        format.html { redirect_to inbox_path, notice: 'Message was Send' }
       end
       format.json { render json: @message, status: :created, location: @message }
     end
@@ -87,7 +87,7 @@ class MessagesController < ApplicationController
     end
     respond_to do |format|
      if  count == 1
-        format.html { redirect_to inbox_url, notice: 'U flagged it' }
+        format.html { redirect_to inbox_path, notice: 'U flagged it' }
         format.json { render json: @message, status: :created, location: @message }
      else
         format.html { redirect_to request.referrer, notice: 'U have already flagged it ' }
@@ -116,13 +116,13 @@ class MessagesController < ApplicationController
     respond_to do |format|
        if @message.save
          if params[:commit] != "send"
-            format.html { redirect_to inbox_url, notice: 'Message was Saved in drafts' }
+            format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
          else
-            format.html { redirect_to inbox_url, notice: "Message was Send " }
+            format.html { redirect_to inbox_path, notice: "Message was Send " }
          end
          format.json { render json: @message, status: :created, location: @message }
        else
-         format.html { redirect_to message_url, notice: 'Something went wrong' }
+         format.html { redirect_to message_path, notice: 'Something went wrong' }
          format.json { render json: @message.errors, status: :unprocessable_entity }
        end
     end
@@ -209,9 +209,9 @@ class MessagesController < ApplicationController
     respond_to do |format|
       if  count == 1 && @message.save && @message.receivers.count != 0
         if params[:commit] != "send"
-            format.html { redirect_to inbox_url, notice: 'Message was Saved in drafts' }
+            format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
         else
-            format.html { redirect_to inbox_url, notice: "Message was Send " }
+            format.html { redirect_to inbox_path, notice: "Message was Send " }
         end
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0
