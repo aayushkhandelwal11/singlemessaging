@@ -1,6 +1,3 @@
-<% if notice !=nil %>
-  <p id="notice"><%= notice %></p>
-<%end%>
 <h1>Listing Drafts</h1>
 <%= paginate @messages %>
 <table>
@@ -15,7 +12,7 @@
     <td><%= message.subject %></td>
     <td><%= message.updated_at.ctime %></td>
     <td><%= link_to 'edit' ,edit_message_path(message.id)%></td>
-    <td><%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <td><%= link_to "Delete", messages_url({:id => message.id}) %></td>
   </tr>
 <% end %>
 </table>

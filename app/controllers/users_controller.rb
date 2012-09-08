@@ -29,9 +29,11 @@ class UsersController < ApplicationController
    end   
    respond_to do |format|
     if count == 1
-      format.html { redirect_to request.referrer, notice: 'A mail has been sent to you' }
+      flash[:notice] = 'A mail has been sent to you'
+      format.html { redirect_to request.referrer }
     else
-      format.html { redirect_to request.referrer, notice: "Your entry Doesn't match our record" }
+      flash[:error] = "Your entry Doesn't match our record"
+      format.html { redirect_to request.referrer }
     end
    end 
   end
@@ -53,7 +55,8 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         Notifier.welcome_message(@user).deliver
-        format.html { redirect_to login_path, notice: "User #{@user.name} was successfully created." }
+        flash[:notice]= "User #{@user.name} was successfully created."
+        format.html { redirect_to login_path}
         format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: "new" }
@@ -66,10 +69,11 @@ class UsersController < ApplicationController
     @user = User.find(session[:user_id])
     respond_to do |format|
       if params[:user] != nil && @user.update_attribute(:notification, params[:user][:notification])
-        format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated." }
+        format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated" }
         format.json { head :no_content }
       else
-        format.html { render action: "change_notification", notice: "Somethong went wrong ."  }
+        flash[:error] = "Something went wrong "
+        format.html { render action: "change_notification" }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end  
@@ -78,11 +82,16 @@ class UsersController < ApplicationController
   def update_picture
     @user = User.find(session[:user_id])
     respond_to do |format|
-      if params[:user] != nil &&  @user.update_attribute(:avatar,params[:user][:avatar])
-        format.html { redirect_to inbox_path,notice: "User #{@user.name} was successfully updated." }
+      if params[:user] && @user.update_attributes({:avatar => params[:user][:avatar]})
+        format.html { redirect_to inbox_path , notice: "User #{@user.name} was successfully updated." }
         format.json { head :no_content }
+      elsif params[:user] == nil
+        flash[:error] = "Please update a photo" 
+        format.html { redirect_to request.referrer  }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
       else 
-        format.html { render action: "change_avatar" }
+        flash[:error] = "Please update a photo of jpg/png type"
+        format.html { redirect_to request.referrer}
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end  
@@ -98,11 +107,13 @@ class UsersController < ApplicationController
          format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated." }
          format.json { head :no_content }
        else
-         format.html { redirect_to edit_user_path(@user.id), notice: "Password is empty or doesnt matches"  }
+         flash[:error] = "Password is empty or doesnt matches"
+         format.html { redirect_to edit_user_path(@user.id), notice: "Password is less then 8 or doesn't matches confirmation"  }
          format.json { render json: @user.errors, status: :unprocessable_entity }
        end
      else
-         format.html { redirect_to edit_user_path(@user.id), notice: "Old password does'nt match" } 
+         flash[:error] = "Old password doesn't match"
+         format.html { redirect_to edit_user_path(@user.id)} 
      end  
    end
   end

@@ -11,15 +11,13 @@ class User < ActiveRecord::Base
   
   
   
-  #validates_attachment_size :avatar,:less_than => 4.megabytes,:message   => "is too big"
-  validates_attachment :avatar, :presence => true
-  validates_attachment_content_type :avatar, :content_type => ["image/jpeg", "image/pjpeg", "image/png", "image/x-png", "image/gif"] , :message => "Only jpeg, gif and png files are allowed for profile pictures"
+  validates_attachment_size :avatar, :less_than=>1.megabyte, :message => "Image size too large"
+  validates_attachment_content_type :avatar, :content_type=>['image/jpeg', 'image/png', 'image/gif', 'image/jpg'], :message => "Please upload a image of jpg/png format"
   validates :name, :uniqueness => {:case_sensitive => false}, :presence => true
   validates :email, :uniqueness => {:case_sensitive => false}, :presence => true 
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create
-  validates :age, :presence=> true
-  validates_inclusion_of :age, :in => 0..99
-  validates_length_of :password, :minimum => 8
+  validates :age, :presence=> true,:numericality => {:only_integer => true}
+  validates :password, :presence     => true, :confirmation => true,:length => { :minimum => 6 }, :if => :password 
   
  
   has_attached_file :avatar ,:styles => {:small => "120*120"}

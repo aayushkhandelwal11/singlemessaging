@@ -11,7 +11,8 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       redirect_to inbox_path
     else
-      redirect_to login_path, notice: "Invalid user/password combination"
+     flash[:error]= "Invalid user/password combination"
+      redirect_to login_path 
     end
   end
 

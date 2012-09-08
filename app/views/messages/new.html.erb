@@ -1,6 +1,3 @@
-<% if notice !=nil %>
- <p id="notice"><%= notice %></p>
-<%end%>
 <fieldset id="outer">
   <legend>New message</legend>
   <%= form_for @message  do |f| %>
@@ -15,3 +12,4 @@
   <% end %>
 </fieldset>
 <%= link_to 'Back', messages_path %>
+

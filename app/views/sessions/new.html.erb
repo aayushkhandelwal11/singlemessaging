@@ -1,9 +1,5 @@
 <div class="depot_form">
-  <% if notice !=nil %>
-    <p id="notice"><%= notice %></p>
-  <%end%>
- 
-  <%= form_tag('/sessions/create',:method => :get) do %>
+   <%= form_tag('/sessions/create',:method => :get) do %>
     <fieldset>
       <legend>Please Log In</legend>
 

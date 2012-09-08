@@ -1,6 +1,3 @@
-<% if notice !=nil %>
- <p id="notice"><%= notice %></p>
-<%end%>
 <fieldset id="outer">
 <legend>Draft</legend>
   <%= form_for @message, :html => {:multipart => true} ,:url => send_draft_messages_path, :method =>"put" do |f| %>

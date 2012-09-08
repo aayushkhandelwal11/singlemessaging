@@ -3,12 +3,16 @@ Singlemessaging::Application.routes.draw do
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"
+
+  match "/inbox" => "messages#inbox", :as =>"inbox", :via =>"get"
   match "/reply" => "messages#reply", :as =>"reply", :via =>"post"
-  resources :messages, :except => [ :update] do
+  resources :messages, :except => [ :update,:index] do
     member do
       get :downloads
+      get :add_asset
     end
     collection do
+      get 'destroy' => :destroy
       get :drafts
       get :outbox
       put :flag
@@ -31,7 +35,7 @@ Singlemessaging::Application.routes.draw do
 	controller :sessions do
 		get 'login' => :new
 		post 'login' => :create
-		delete 'logout' => :destroy
+		get 'logout' => :destroy
 	end
 
   # The priority is based upon order of creation:
@@ -83,7 +87,7 @@ Singlemessaging::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-    root :to => 'messages#index', as: 'inbox' 
+    root :to => 'sessions#new' 
 
   # See how all your routes lay out with "rake routes"
 

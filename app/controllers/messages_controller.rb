@@ -13,7 +13,8 @@ class MessagesController < ApplicationController
   def edit
     @message = Message.includes(:receivers).find(params[:id])
     if @message.sender_id != session[:user_id]
-       redirect_to inbox_path, notice: 'You are not authorized for this' 
+       flash[:notice]= 'You are not authorized for this' 
+       redirect_to inbox_path
     end
     session[:edit_message] = params[:id]
     @receivers = ""
@@ -27,11 +28,10 @@ class MessagesController < ApplicationController
   def send_draft
     @message = Message.find(session[:edit_message])
     if @message.sender_id != session[:user_id]
-       redirect_to inbox_path, notice: 'You are not authorized for this' 
+       flash[:notice]= 'You are not authorized for this' 
+       redirect_to inbox_path 
     end
     @message.content = params[:message][:content]
-    #@message.subject = params[:message][:subject]
-    #@message.parent_id = @message.id
     @message.created_at=Time.now
     @message.updated_at=Time.now
     @message.save
@@ -47,13 +47,13 @@ class MessagesController < ApplicationController
       if params[:commit] != "send"
         format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
       else
-        format.html { redirect_to inbox_path, notice: 'Message was Send' }
+        format.html { redirect_to inbox_path, notice: 'Message was Sent' }
       end
       format.json { render json: @message, status: :created, location: @message }
     end
   end
   
-  def index
+  def inbox
     
     user=User.find(session[:user_id])
     @messages = Message.inbox(user).page(params[:page]).per(5)
@@ -87,10 +87,11 @@ class MessagesController < ApplicationController
     end
     respond_to do |format|
      if  count == 1
-        format.html { redirect_to inbox_path, notice: 'U flagged it' }
+        format.html { redirect_to inbox_path, notice: 'You flagged it' }
         format.json { render json: @message, status: :created, location: @message }
      else
-        format.html { redirect_to request.referrer, notice: 'U have already flagged it ' }
+        flash[:error] = 'You have already flagged it '
+        format.html { redirect_to request.referrer }
         format.json { render json: @message.errors, status: :unprocessable_entity }
       end
     end 
@@ -102,8 +103,7 @@ class MessagesController < ApplicationController
     @message.sender = User.find session[:user_id]
     @message.parent_id = session[:message_id]
     parentmessage = Message.find @message.parent_id
-    parentmessage.updated_at = Time.now
-    parentmessage.save
+    parentmessage.touch
     @message.subject=parentmessage.subject
     @message.save
     array_of_user = []
@@ -118,11 +118,12 @@ class MessagesController < ApplicationController
          if params[:commit] != "send"
             format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
          else
-            format.html { redirect_to inbox_path, notice: "Message was Send " }
+            format.html { redirect_to inbox_path, notice: "Message was Sent " }
          end
          format.json { render json: @message, status: :created, location: @message }
        else
-         format.html { redirect_to message_path, notice: 'Something went wrong' }
+         flash[:error] = 'Something went wrong '
+         format.html { redirect_to message_path }
          format.json { render json: @message.errors, status: :unprocessable_entity }
        end
     end
@@ -144,12 +145,12 @@ class MessagesController < ApplicationController
     end
     if parentmessage.sender_id == session[:user_id]
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
-       @messages = Message.showing_to_sender(parentmessage,parentmessage.sender).page(params[:page]).per(3)
+       @messages = Message.showing_to_sender(parentmessage,parentmessage.sender).page(params[:page]).per(2)
     
     else
        receiver_user = User.find session[:user_id]
        @receiver=receiver_user.name
-       @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user).page(params[:page]).per(3)
+       @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user).page(params[:page]).per(2)
     end  
     @message = Message.new
     3.times { @message.assets.build}
@@ -211,23 +212,34 @@ class MessagesController < ApplicationController
         if params[:commit] != "send"
             format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
         else
-            format.html { redirect_to inbox_path, notice: "Message was Send " }
+            format.html { redirect_to inbox_path, notice: "Message was Sent " }
         end
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0
         if params[:message][:content].length < 1
-          format.html { redirect_to request.referrer, notice: 'Subject is empty' }
+          flash[:error] = 'Subject is empty'
+          format.html { redirect_to request.referrer }
         else
-          format.html { redirect_to request.referrer, notice: 'Mention atleast one recepent' }
+          flash[:error] = 'Mention atleast one recepent'
+          format.html { redirect_to request.referrer }
         end  
         format.json { render json: @message.errors, status: :unprocessable_entity }
       elsif @message.receivers.count == 0
          @message.destroy
-         format.html { redirect_to request.referrer, notice: 'Invalid receiver' }
+         flash[:error] = 'Invalid receiver'
+         format.html { redirect_to request.referrer }
       else
         format.html { render action: "new" }
         format.json { render json: @message.errors, status: :unprocessable_entity }
       end
+    end
+  end
+  def add_asset
+    @message = Message.find(params[:id])
+    @message.assets.build
+    respond_to do |format|
+      format.html { redirect_to request.referrer }
+      format.json { render json: @message }
     end
   end
 

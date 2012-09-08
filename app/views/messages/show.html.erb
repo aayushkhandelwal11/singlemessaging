@@ -1,6 +1,3 @@
-<% if notice !=nil %>
-  <p id="notice"><%= notice %></p>
-<%end%>
 <h4> From :&nbsp;&nbsp;&nbsp;<%=@sender%><br>
   To :&nbsp;&nbsp;&nbsp;<%=@receiver%><br>
 </h4>
@@ -14,12 +11,7 @@ Subject :&nbsp;<%=@subject%>
 
 <% @messages.each do |message| %>
   <fieldset id="<%= cycle('odd', 'even') %>">
-    <table>
-      <tr>
-        <td> <h4>From: </h4></td>
-        <td> <h4><%= message.sender.name %></h4> </td>
-      </tr>
-    </table>
+        <h4>From:&nbsp;&nbsp;&nbsp;<%= message.sender.name %></h4> </td>
     <div id="right">
       <%= message.created_at.ctime %>
     </div>
@@ -31,8 +23,8 @@ Subject :&nbsp;<%=@subject%>
     <% for asset in message.assets %>
        <%=link_to asset.document_file_name , downloads_message_path(asset.id) %> <br>
     <%end%> 
-    <%= link_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %>
-    
+    <%= link_to "Delete", messages_url({:id => message.id}) %>
+   
   </fieldset> 
 <% end %>
 <br />
