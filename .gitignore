@@ -12,4 +12,7 @@
 /public
 # Ignore all logfiles and tempfiles.
 /log/*.log
+/config/database.yml
+
+
 /tmp
