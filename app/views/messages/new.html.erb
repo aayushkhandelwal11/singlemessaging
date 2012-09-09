@@ -1,3 +1,8 @@
+<%- content_for(:head) do -%>
+<%= javascript_include_tag "application"  %>
+<%= javascript_include_tag "autocomplete-rails.js" %>
+<%= stylesheet_link_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/themes/ui-lightness/jquery-ui.css" %>
+<%- end -%>
 <fieldset id="outer">
   <legend>New message</legend>
   <%= form_for @message  do |f| %>

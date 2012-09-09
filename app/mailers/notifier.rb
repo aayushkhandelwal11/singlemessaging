@@ -6,8 +6,9 @@ class Notifier < ActionMailer::Base
   #
   #   en.notifier.gmail_message.subject
   #
-  def gmail_message(user1,user)
+  def gmail_message(user1,user,url)
     @greeting = "Hi"
+    @path= url
     @user=user
     @user1=user1
     mail(:to => "#{user.name} <#{user.email}>", :subject => "Recieved a message")

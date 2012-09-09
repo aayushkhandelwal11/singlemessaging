@@ -170,6 +170,7 @@ class MessagesController < ApplicationController
     end
   end
   def create_receivers(array_of_users,message,received)
+    count =0
     array_of_users.each do |num|
       @receiver = Receiver.new
       if params[:commit] == "send"
@@ -184,18 +185,21 @@ class MessagesController < ApplicationController
         @receiver.user = User.find(num) 
       end  
         @receiver.message = message
-     
-      if @receiver.user != nil && @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
+      if @receiver.user ==nil
+         count+=1
+      elsif  @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
         if @receiver.user.notification == "1"
-          Notifier.gmail_message(message.sender,@receiver.user).deliver   
+          Notifier.gmail_message(message.sender,@receiver.user,message_url(message.id)).deliver   
         end
       end  
-    end    
+    end
+    count    
   end
 
   def create
     array_of_id = [] 
     count = 0
+    wrong_users=0
     if params[:message][:sender_id].length > 1 && params[:message][:subject].length > 1
       count = 1
       array_of_user=params[:message][:sender_id].split(";")
@@ -205,10 +209,13 @@ class MessagesController < ApplicationController
       @message.subject = params[:message][:subject]
       @message.save
       @message.update_attribute(:parent_id , @message.id)
-      create_receivers(array_of_user, @message, "create")
+      wrong_users=create_receivers(array_of_user, @message, "create")
     end  
     respond_to do |format|
       if  count == 1 && @message.save && @message.receivers.count != 0
+        if count > 0
+          flash[:alert]= "#{wrong_users} of the recipeients doesn't exists"
+        end
         if params[:commit] != "send"
             format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
         else
@@ -234,15 +241,6 @@ class MessagesController < ApplicationController
       end
     end
   end
-  def add_asset
-    @message = Message.find(params[:id])
-    @message.assets.build
-    respond_to do |format|
-      format.html { redirect_to request.referrer }
-      format.json { render json: @message }
-    end
-  end
-
   def destroy
     @message = Message.find(params[:id])
     if @message.sender_id == session[:user_id]
