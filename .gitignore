@@ -6,10 +6,9 @@
 
 # Ignore bundler config
 /.bundle
-
+/public/system/*
 # Ignore the default SQLite database.
 /db/*.sqlite3
-/public
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /config/database.yml
