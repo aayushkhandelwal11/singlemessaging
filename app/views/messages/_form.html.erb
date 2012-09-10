@@ -3,9 +3,11 @@
     <%= f.text_area :content,:cols=>116,:rows=>6 %>
   </div>
   <%= f.fields_for :assets do |builder| %>
-         <%= builder.label :document,"Attach a file" %> 
-         <%= builder.file_field :document %><br />
+         <%= render "asset_fields",:f => builder %>
+        
    <% end %>
+  <p><%= f.link_to_add "Add a Attachment", :assets %></p>
+
   <%= f.submit 'send', :class => "create" %>
   <%= f.submit 'save to drafts', :class => "create" %> 
 

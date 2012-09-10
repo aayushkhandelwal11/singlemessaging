@@ -1,4 +1,10 @@
 GIT
+  remote: git://github.com/ryanb/nested_form.git
+  revision: 74a8683c1e2569f575f828b7f9dd84957a47ee67
+  specs:
+    nested_form (0.2.3)
+
+GIT
   remote: git://github.com/thoughtbot/paperclip.git
   revision: cb7ad7bd427825bf4a10a539e6f15a6d7a945b99
   specs:
@@ -161,6 +167,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   jquery-rails
   kaminari
+  nested_form!
   paperclip!
   rails (= 3.2.7)
   rails3-jquery-autocomplete (~> 1.0.7)

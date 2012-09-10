@@ -153,7 +153,7 @@ class MessagesController < ApplicationController
        @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user).page(params[:page]).per(2)
     end  
     @message = Message.new
-    3.times { @message.assets.build}
+    @message.assets.build
     respond_to do |format|
       format.html
       format.json { render json: @messages }
@@ -162,7 +162,7 @@ class MessagesController < ApplicationController
 
   def new
     @message = Message.new
-    3.times { @message.assets.build}
+    @message.assets.build
     
     respond_to do |format|
       format.html # new.html.erb
@@ -185,7 +185,7 @@ class MessagesController < ApplicationController
         @receiver.user = User.find(num) 
       end  
         @receiver.message = message
-      if @receiver.user ==nil
+      if @receiver.user == nil
          count+=1
       elsif  @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
         if @receiver.user.notification == "1"
@@ -213,7 +213,7 @@ class MessagesController < ApplicationController
     end  
     respond_to do |format|
       if  count == 1 && @message.save && @message.receivers.count != 0
-        if count > 0
+        if wrong_users > 0
           flash[:alert]= "#{wrong_users} of the recipeients doesn't exists"
         end
         if params[:commit] != "send"

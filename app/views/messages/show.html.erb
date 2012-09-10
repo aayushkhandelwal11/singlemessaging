@@ -1,6 +1,7 @@
 <%- content_for(:head) do -%>
 <%= javascript_include_tag "jquery-1.8.0.min.js"  %>
 <%= javascript_include_tag "messages.js.coffee" %>
+<%= javascript_include_tag "nested_form.js" %>
 <%- end -%>
 <h4> From :&nbsp;&nbsp;&nbsp;<%=@sender%><br>
   To :&nbsp;&nbsp;&nbsp;<%=@receiver%><br>
@@ -38,7 +39,7 @@ Subject :&nbsp;<%=@subject%>
 <div id="replying" >
 
   <fieldset id="outer">
-   <%= form_for @message,:url => reply_path ,:multipart => true, :method => "post"  do |f| %>
+   <%= nested_form_for @message,:url => reply_path ,:multipart => true, :method => "post"  do |f| %>
      <%= render :partial => 'form',
            :locals => {:f => f}%>
    <%end%>
