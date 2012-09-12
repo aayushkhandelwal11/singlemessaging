@@ -9,10 +9,10 @@ Singlemessaging::Application.routes.draw do
   resources :messages, :except => [ :update,:index] do
     member do
       get :downloads
-      get :add_asset
     end
     collection do
       get 'destroy' => :destroy
+      get :show_delete
       get :drafts
       get :outbox
       put :flag

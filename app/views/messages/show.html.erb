@@ -2,6 +2,7 @@
 <%= javascript_include_tag "jquery-1.8.0.min.js"  %>
 <%= javascript_include_tag "messages.js.coffee" %>
 <%= javascript_include_tag "nested_form.js" %>
+
 <%- end -%>
 <h4> From :&nbsp;&nbsp;&nbsp;<%=@sender%><br>
   To :&nbsp;&nbsp;&nbsp;<%=@receiver%><br>
@@ -12,18 +13,24 @@ Subject :&nbsp;<%=@subject%>
 <div id="right">
   <%= button_to 'Flag', flag_messages_path, method: "put", :class =>"create" %>
 </div>
-<%= paginate @messages %>
+
+<%#= paginate @messages %>
 
 <% @messages.each do |message| %>
+  <%= check_box_tag 'message_ids[]', item.id, false %> 
   <fieldset id="<%= cycle('odd', 'even') %>">
-        <h4>From:&nbsp;&nbsp;&nbsp;<%= message.sender.name %></h4> </td>
+        <table>
+        <tr><td><h4>From:&nbsp;&nbsp;&nbsp;<%= message.sender.name %></td></h4><td><%= image_tag message.sender.avatar.url(:thumb) %></td></tr></table>
     <div id="right">
       <%= message.created_at.ctime %>
     </div>
+    <% if message.content.length >0 %>
     Message
-    <div id="box">
+    
+    <div id="content">
     <%= message.content %>
     </div>
+    <%end%>
     <br>
     <% for asset in message.assets %>
        <%=link_to asset.document_file_name , downloads_message_path(asset.id) %> <br>

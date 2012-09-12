@@ -145,12 +145,12 @@ class MessagesController < ApplicationController
     end
     if parentmessage.sender_id == session[:user_id]
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
-       @messages = Message.showing_to_sender(parentmessage,parentmessage.sender).page(params[:page]).per(2)
+       @messages = Message.showing_to_sender(parentmessage,parentmessage.sender)#.page(params[:page]).per(2)
     
     else
        receiver_user = User.find session[:user_id]
        @receiver=receiver_user.name
-       @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user).page(params[:page]).per(2)
+       @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user)#.page(params[:page]).per(2)
     end  
     @message = Message.new
     @message.assets.build
@@ -241,9 +241,8 @@ class MessagesController < ApplicationController
       end
     end
   end
-  def destroy
-    @message = Message.find(params[:id])
-    if @message.sender_id == session[:user_id]
+  def update_receivers(message)
+    if message.sender_id == session[:user_id]
        receivers=Receiver.find_all_by_message_id(params[:id])
        receivers.each do |receiver|
          if receiver.status == Message::MESSAGE_STATUS["Draft"]
@@ -257,7 +256,7 @@ class MessagesController < ApplicationController
              receiver.save
          end
        end          
-   else
+    else
       receiver=Receiver.find_by_message_id_and_user_id(params[:id],session[:user_id])
       if receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]
           receiver.status = Message::MESSAGE_STATUS["ReceiverDelete"]
@@ -265,10 +264,14 @@ class MessagesController < ApplicationController
           receiver.status = Message::MESSAGE_STATUS["BothDelete"]
       end
       receiver.save          
-   end
-   respond_to do |format|
-     format.html { redirect_to request.referrer }
-     format.json { head :no_content }
-   end
+    end
+  end  
+  def destroy
+    @message = Message.find(params[:id])
+    update_receivers(message)
+    respond_to do |format|
+      format.html { redirect_to request.referrer }
+      format.json { head :no_content }
+    end
   end
 end

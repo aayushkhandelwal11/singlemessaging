@@ -9,7 +9,12 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:password])
 
       session[:user_id] = user.id
-      redirect_to inbox_path
+      url = session[:return_to] || inbox_path
+      session[:return_to] = nil
+      url = inbox_path if url.eql?('/logout')
+      logger.debug "URL to redirect to: #{url}"
+      redirect_to(url)
+      #redirect_to inbox_path
     else
      flash[:error]= "Invalid email/password combination"
       redirect_to login_path 

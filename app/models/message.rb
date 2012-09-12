@@ -15,9 +15,9 @@ class Message < ActiveRecord::Base
   
   
   validates :sender_id, :presence=> true
-  scope :inbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("r.user_id =? ",user.id).join_with_receiver.group("parent_id") }
+  scope :inbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("r.user_id =? and r.status in (1,2)",user.id).join_with_receiver.group("parent_id") }
    
-  scope :outbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("sender_id =? ",user.id).join_with_receiver.group("parent_id") }
+  scope :outbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("sender_id =? and r.status in (1,3)",user.id).join_with_receiver.group("parent_id") }
   
   scope :drafts, lambda{ |user| includes(:sender, :receivers).listing.where("sender_id = ? and r.status = ?", user.id, MESSAGE_STATUS["Draft"]).join_with_receiver.group("parent_id") }
   

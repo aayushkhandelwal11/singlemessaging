@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  attr_accessible :age, :email, :name, :password_digest
+  attr_accessible :age, :email, :name, :password_digest, :time_zone
   attr_accessible :password, :password_confirmation, :avatar, :notification
   attr_accessible :avatar_file_name, :avatar_content_type, :avatar_file_size, :avatar_updated_at
   
@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   validates :password, :presence     => true, :confirmation => true,:length => { :minimum => 6 }, :if => :password 
   
  
-  has_attached_file :avatar ,:styles => {:small => "120*120"}
+  has_attached_file :avatar ,:styles => {:small => "120*120>",:thumb => "50*50>"}
   
   has_secure_password
   
