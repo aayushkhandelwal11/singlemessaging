@@ -17,11 +17,12 @@ Subject :&nbsp;<%=@subject%>
 
 
 <%= form_tag show_delete_messages_path,:method => :put do %>
+ <table>
  <% @messages.each do |message| %>
-   
-   <%= check_box_tag "message_ids[]" , message.id %>
-   
-   <fieldset id="<%= cycle('odd', 'even') %>">
+   <tr>
+   <td><%= check_box_tag "message_ids[]" , message.id %></td>
+   <td colspan = "56">
+   <fieldset id = "<%= cycle('odd', 'even') %>">
         
         <table>
         <tr><td><h4>From:&nbsp;&nbsp;&nbsp;<%= message.sender.name %></td></h4><td>
@@ -34,13 +35,11 @@ Subject :&nbsp;<%=@subject%>
     <div id="right">
       <%= message.created_at.ctime %>
     </div>
-    <% if message.content.length >0 %>
     Message
-    
     <div id="content">
     <%= message.content %>
     </div>
-    <%end%>
+    
     <br>
     <% for asset in message.assets %>
        <%=link_to asset.document_file_name , downloads_message_path(asset.id) %> <br>
@@ -48,8 +47,10 @@ Subject :&nbsp;<%=@subject%>
     <%= link_to "Delete", messages_url({:id => message.id}) %>
    
    </fieldset> 
+ </td>
+</tr>
   <% end %>
-
+</table>
 <%= submit_tag "Delete Checked",:class => 'create' %>
 <%end %>
 <br />

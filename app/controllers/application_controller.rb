@@ -12,7 +12,10 @@ class ApplicationController < ActionController::Base
   protected
 
   def authorize
-    unless User.find_by_id(session[:user_id])
+    if cookies[:user_id] && session[:user_id] == nil 
+      session[:user_id] = cookies[:user_id]
+    end  
+    unless User.find_by_id(session[:user_id]) || User.find_by_id(cookies[:user_id])
       session[:return_to] = request.fullpath
       flash[:error] = "Please Log in"
       redirect_to login_url
