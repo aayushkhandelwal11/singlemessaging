@@ -35,7 +35,7 @@
        </tr>
        <tr> 
           <td><%= f.label :time_zone,'Time Zone'%></td>
-          <td><%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %></td>
+          <td>&nbsp;&nbsp;<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all.sort,:default => "New Delhi" %></td>
        </tr>  
      </table>
      <br><br>&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box :notification %> Check To receive notifications from site

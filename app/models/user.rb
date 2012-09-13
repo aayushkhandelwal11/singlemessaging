@@ -18,9 +18,7 @@ class User < ActiveRecord::Base
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create
   validates :age, :presence=> true,:numericality => {:only_integer => true}
   validates :password, :presence     => true, :confirmation => true,:length => { :minimum => 6 }, :if => :password 
-  
- 
-  has_attached_file :avatar ,:styles => {:small => "120*120>",:thumb => "50*50>"}
+  has_attached_file :avatar ,:styles => {:small => "120x120>",:thumb => "50x50>"}
   
   has_secure_password
   

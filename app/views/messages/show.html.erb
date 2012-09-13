@@ -18,10 +18,19 @@ Subject :&nbsp;<%=@subject%>
 
 <%= form_tag show_delete_messages_path,:method => :put do %>
  <% @messages.each do |message| %>
+   
    <%= check_box_tag "message_ids[]" , message.id %>
+   
    <fieldset id="<%= cycle('odd', 'even') %>">
+        
         <table>
-        <tr><td><h4>From:&nbsp;&nbsp;&nbsp;<%= message.sender.name %></td></h4><td><%= image_tag message.sender.avatar.url(:thumb) %></td></tr></table>
+        <tr><td><h4>From:&nbsp;&nbsp;&nbsp;<%= message.sender.name %></td></h4><td>
+        <% if message.sender.avatar.exists? %>
+          <%= image_tag message.sender.avatar.url(:thumb) %>
+        <% else %>
+          <%= image_tag("noimage.gif") %>
+        <% end %>
+          </td></tr></table>
     <div id="right">
       <%= message.created_at.ctime %>
     </div>
@@ -40,6 +49,7 @@ Subject :&nbsp;<%=@subject%>
    
    </fieldset> 
   <% end %>
+
 <%= submit_tag "Delete Checked",:class => 'create' %>
 <%end %>
 <br />
@@ -57,4 +67,3 @@ Subject :&nbsp;<%=@subject%>
    <%end%>
   </fieldset>
 </div>
-<%= javascript_include_tag "checking.js" %>

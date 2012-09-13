@@ -14,7 +14,8 @@ class ApplicationController < ActionController::Base
   def authorize
     unless User.find_by_id(session[:user_id])
       session[:return_to] = request.fullpath
-      redirect_to login_url, notice: "Please log in"
+      flash[:error] = "Please Log in"
+      redirect_to login_url
     end
   end
 end
