@@ -12,9 +12,14 @@
           <td><%= label_tag :password, 'Password:' %></td>
           <td><%= password_field_tag :password, params[:password] , size: 30%></td>
         </tr>
-     
-      <table>
-        <%= submit_tag "Login" %>
+
+      </table>
+      <div class="field">
+
+        <%= check_box_tag :remember_me, 1, params[:remember_me] %>
+                <%= label_tag :remember_me %>
+      </div>
+      <%= submit_tag "Login" %>
       </div>
     </fieldset>
   <% end %>

@@ -67,7 +67,7 @@ margin-top:-50px;
   border-width:2px;
 }
 #content {
-  height:auto;
+  height:autos;
   width:90%;
   border-color:#9933FF;
   border-style:solid;
@@ -162,8 +162,9 @@ margin-top:-50px;
       padding-top: 0.2em;
       margin-right: 0.1em;
       display: block;
-    }
 
+    }
+    
     textarea, input {
       margin-left: 0.5em;
     }
@@ -175,6 +176,12 @@ margin-top:-50px;
 
   }
 }
+label[for = 'remember_me'] {
+      width:6em !important;
+      float:none !important;
+      margin-left: 1.2em;
+      margin-top: -1.4em;
+    }
 div#errors{
   color:red;
 }

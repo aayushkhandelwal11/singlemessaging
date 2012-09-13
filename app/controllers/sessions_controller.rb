@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
       url = session[:return_to] || inbox_path
       session[:return_to] = nil
       url = inbox_path if url.eql?('/logout')
-      logger.debug "URL to redirect to: #{url}"
+      #logger.debug "URL to redirect to: #{url}"
       redirect_to(url)
       #redirect_to inbox_path
     else

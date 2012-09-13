@@ -241,12 +241,36 @@ class MessagesController < ApplicationController
       end
     end
   end
+  def index_delete
+     @messages = Message.find(params[:message_ids])
+     @messages.each do |message|
+        childmessages = Message.find_all_by_parent_id(message.parent_id) 
+        
+        childmessages.each do |childmessage|
+         update_receivers(childmessage)
+        end
+     end  
+     respond_to do |format|
+       format.html { redirect_to request.referrer,:notice => "Selected Messages Deleted"}
+       format.json { head :no_content }
+     end
+  end 
+  def show_delete
+     @messages = Message.find(params[:message_ids])
+     @messages.each do |message|
+        update_receivers(message)
+     end  
+     respond_to do |format|
+       format.html { redirect_to request.referrer,:notice => "Selected Messages Deleted"}
+       format.json { head :no_content }
+     end
+  end  
   def update_receivers(message)
     if message.sender_id == session[:user_id]
-       receivers=Receiver.find_all_by_message_id(params[:id])
-       receivers.each do |receiver|
+       receivers=Receiver.find_all_by_message_id(message.id)
+         receivers.each do |receiver|
          if receiver.status == Message::MESSAGE_STATUS["Draft"]
-            @message.destroy
+            message.destroy
             break;        
          elsif receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]
              receiver.status = Message::MESSAGE_STATUS["SenderDelete"]
@@ -257,7 +281,7 @@ class MessagesController < ApplicationController
          end
        end          
     else
-      receiver=Receiver.find_by_message_id_and_user_id(params[:id],session[:user_id])
+      receiver=Receiver.find_by_message_id_and_user_id(message.id,session[:user_id])
       if receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]
           receiver.status = Message::MESSAGE_STATUS["ReceiverDelete"]
       elsif receiver.status == Message::MESSAGE_STATUS["SenderDelete"]
@@ -268,7 +292,7 @@ class MessagesController < ApplicationController
   end  
   def destroy
     @message = Message.find(params[:id])
-    update_receivers(message)
+    update_receivers(@message)
     respond_to do |format|
       format.html { redirect_to request.referrer }
       format.json { head :no_content }

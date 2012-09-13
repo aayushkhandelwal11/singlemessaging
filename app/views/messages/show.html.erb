@@ -3,6 +3,7 @@
 <%= javascript_include_tag "messages.js.coffee" %>
 <%= javascript_include_tag "nested_form.js" %>
 
+
 <%- end -%>
 <h4> From :&nbsp;&nbsp;&nbsp;<%=@sender%><br>
   To :&nbsp;&nbsp;&nbsp;<%=@receiver%><br>
@@ -14,11 +15,11 @@ Subject :&nbsp;<%=@subject%>
   <%= button_to 'Flag', flag_messages_path, method: "put", :class =>"create" %>
 </div>
 
-<%#= paginate @messages %>
 
-<% @messages.each do |message| %>
-  <%= check_box_tag 'message_ids[]', item.id, false %> 
-  <fieldset id="<%= cycle('odd', 'even') %>">
+<%= form_tag show_delete_messages_path,:method => :put do %>
+ <% @messages.each do |message| %>
+   <%= check_box_tag "message_ids[]" , message.id %>
+   <fieldset id="<%= cycle('odd', 'even') %>">
         <table>
         <tr><td><h4>From:&nbsp;&nbsp;&nbsp;<%= message.sender.name %></td></h4><td><%= image_tag message.sender.avatar.url(:thumb) %></td></tr></table>
     <div id="right">
@@ -37,10 +38,14 @@ Subject :&nbsp;<%=@subject%>
     <%end%> 
     <%= link_to "Delete", messages_url({:id => message.id}) %>
    
-  </fieldset> 
-<% end %>
+   </fieldset> 
+  <% end %>
+<%= submit_tag "Delete Checked",:class => 'create' %>
+<%end %>
 <br />
 <button id="buttonreply" class="create">Reply</button>
+
+
 
 
 <div id="replying" >
@@ -52,3 +57,4 @@ Subject :&nbsp;<%=@subject%>
    <%end%>
   </fieldset>
 </div>
+<%= javascript_include_tag "checking.js" %>

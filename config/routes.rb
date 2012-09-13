@@ -12,7 +12,8 @@ Singlemessaging::Application.routes.draw do
     end
     collection do
       get 'destroy' => :destroy
-      get :show_delete
+      put :index_delete
+      put :show_delete
       get :drafts
       get :outbox
       put :flag
