@@ -1,43 +1,46 @@
 <%= form_tag index_delete_messages_path,:method => :put do %>
 <%= paginate @messages %>
-<table>
-  <tr>
-    <th></th>
-    <th colspan ='2'>From user</th>
-    <th colspan ='2'> TO</th>
-    <th colspan ='2'> Subject</th>
-    <th colspan ='2'>Date</th>
-    <th colspan ='2'></th>
-  </tr>
+<% if @messages.length > 0  %>
+  <table WIDTH="90%" id="center">
+    <tr>
+      <th></th>
+      <th colspan >From user</th>
+      <th colspan > TO</th>
+      <th colspan > Subject</th>
+      <th colspan >Date</th>
+      <th colspan ></th>
+    </tr>
 
-<% @messages.each do |message| %>
-  <tr class="read">
-  <% for receiver in message.receivers %>
-        <% if receiver.user_id == session[:user_id] && !receiver.read %>
-           
-           <tr class="unread">
-        <%end%>
-    <%end%>  
-  <td><%= check_box_tag "message_ids[]", message.id %></td>
-  <td colspan ='2'>  <%= message.sender.name %></td>
-    <td colspan ='2'> 
-       <% if message.sender_id == session[:user_id] %>
-         <% r=""%>
-         <%for receiver in message.receivers %>
-            <% r += receiver.user.name + ", "  %>
-         <%end%>
-         <%=r[0..-3]%>
-       <% else %>
+   <% @messages.each do |message| %>
+     <tr class="read">
+     <% for receiver in message.receivers %>
+          <% if receiver.user_id == session[:user_id] && !receiver.read %>
+               <tr class="unread">
+          <%end%>
+     <%end%>  
+     <td><%= check_box_tag "message_ids[]", message.id %></td>
+     <td colspan >  <%= message.sender.name %></td>
+     <td colspan > 
+        <% if message.sender_id == session[:user_id] %>
+          <% r=""%>
+          <%for receiver in message.receivers %>
+             <% r += receiver.user.name + ", "  %>
+          <%end%>
+          <%=r[0..-3]%>
+        <% else %>
           <%= User.find(session[:user_id]).name %>  
-       <%end%>   
-    <td colspan ='2'><%= link_to message.subject, message %></td>
-    <td colspan ='2'><%= message.updated_at.ctime %></td>
-  </tr>
-<% end %>
-</table>
-
+        <%end%>   
+     <td colspan ><%= link_to message.subject, message %></td>
+     <td colspan ><%= message.updated_at.ctime %></td>
+    </tr>
+   <% end %>
+  </table>
 <br />
+<% else %>
+<h3> Nothing for you</h3>
+<%end%>
 <%= submit_tag "Delete Checked",:class => 'create' %>
 <% end %>
+
 <%= javascript_include_tag "jquery-1.8.0.min.js"  %>
 <%= javascript_include_tag "checking.js" %>

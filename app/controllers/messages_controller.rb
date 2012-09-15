@@ -223,7 +223,7 @@ class MessagesController < ApplicationController
         end
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0
-        if params[:message][:content].length < 1
+        if params[:message][:subject].length < 1
           flash[:error] = 'Subject is empty'
           format.html { redirect_to request.referrer }
         else

@@ -17,6 +17,7 @@
    <div id="user"> Welcome
    <% if session[:user_id]!=nil %> 
    <%= (User.find session[:user_id]).name%>
+   <h3><%= link_to 'Log Out',logout_path,:method=>:delete%></h3>
    <%else%>
    Guest
    <%end%>
@@ -42,7 +43,7 @@
         <li><%= link_to 'Update Avatar', change_avatar_users_path%></li>
         <li><%= link_to 'Update Notifications', change_notification_users_path%></li>
         <li><%= link_to 'Update Password', edit_user_path(session[:user_id]) %></li>
-        <li><%= link_to 'Log Out',logout_path,:method=>:delete%></li>
+        
         <%end%>
       </ul>
     </div>

@@ -1,6 +1,7 @@
 #banner {
   background:  #8d3c89;
   padding: 10px;
+  padding-bottom:15px;
   border-bottom: 2px solid;
   font: small-caps 40px/40px "Times New Roman", serif;
   color: white;
@@ -186,8 +187,10 @@ label[for = 'remember_me'] {
 div#errors{
   color:red;
 }
-.mm {
-margin-left: 13em;
+table#center{
+td{
+  text-align:center;
+}
 }
 td.error
 {
@@ -201,4 +204,10 @@ tr.read
 tr.unread
 {
 	background:#F8A9A9;
+}
+.field_with_errors{
+  color:red;
+  input{
+    border: 2px solid red;
+  }
 }
