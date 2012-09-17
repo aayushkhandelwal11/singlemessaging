@@ -20,7 +20,7 @@ class UsersController < ApplicationController
    count = 0
    if User.find_by_name_and_email(params[:user][:name],params[:user][:email])
       @user = User.find_by_name params[:user][:name]
-      pass = SecureRandom.urlsafe_base64
+      pass = SecureRandom.urlsafe_base64(n=6)
       @user.password = pass
       @user.password_confirmation = pass
       @user.save

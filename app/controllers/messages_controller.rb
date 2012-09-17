@@ -200,6 +200,7 @@ class MessagesController < ApplicationController
     array_of_id = [] 
     count = 0
     wrong_users=0
+
     if params[:message][:sender_id].length > 1 && params[:message][:subject].length > 1
       count = 1
       array_of_user=params[:message][:sender_id].split(";")
@@ -223,18 +224,22 @@ class MessagesController < ApplicationController
         end
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0
+         @message = Message.new(params[:message])
         if params[:message][:subject].length < 1
-          flash[:error] = 'Subject is empty'
-          format.html { redirect_to request.referrer }
+          
+          flash.now[:error] = 'Subject is empty'
+          format.html { render action: "new" }
         else
-          flash[:error] = 'Mention atleast one recepent'
-          format.html { redirect_to request.referrer }
+
+          flash.now[:error] = 'Mention atleast one recepent'
+          format.html { render action: "new" }
         end  
         format.json { render json: @message.errors, status: :unprocessable_entity }
       elsif @message.receivers.count == 0
          @message.destroy
-         flash[:error] = 'Invalid receiver'
-         format.html { redirect_to request.referrer }
+         @message = Message.new(params[:message])
+         flash.now[:error] = 'Invalid receiver'
+         format.html { render action: "new" }
       else
         format.html { render action: "new" }
         format.json { render json: @message.errors, status: :unprocessable_entity }
