@@ -16,6 +16,7 @@ Subject :&nbsp;<%=@subject%>
 
 
 <%= form_tag show_delete_messages_path,:method => :put do %>
+ <%= check_box_tag :checkall %>
  <table>
  <% @messages.each do |message| %>
    <tr>
@@ -36,7 +37,7 @@ Subject :&nbsp;<%=@subject%>
     </div>
     Message
     <div id="content">
-    <%= message.content %>
+    <%= message.content.gsub(/\n/, '<br/>').html_safe %>
     </div>
     
     <br>

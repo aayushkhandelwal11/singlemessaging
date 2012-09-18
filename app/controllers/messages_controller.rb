@@ -130,7 +130,8 @@ class MessagesController < ApplicationController
   end
   
   def show
-    message = Message.find (params[:id])   
+    message = Message.find (params[:id])  
+     
     parentmessage = Message.find message.parent_id
     session[:message_id] = parentmessage.id
     @sender = parentmessage.sender.name

@@ -3,7 +3,7 @@
 <% if @messages.length > 0  %>
   <table WIDTH="90%" id="center">
     <tr>
-      <th></th>
+      <th><%= check_box_tag :checkall %></th>
       <th colspan >From</th>
       <th colspan > To</th>
       <th colspan > Subject</th>

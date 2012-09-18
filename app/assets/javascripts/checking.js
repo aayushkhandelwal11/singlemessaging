@@ -3,6 +3,9 @@
  if (no_of_checkboxes == 0)
   { $('input[value="Delete Checked"]').hide(); }
 
+$('#checkall').click(function(){
+    $('input:checkbox').attr('checked',this.checked);
+});
 
 $('input[value="Delete Checked"]').click(function(){
   var n = $("input:checkbox:checked").length;
