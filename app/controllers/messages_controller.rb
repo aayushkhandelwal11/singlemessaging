@@ -3,10 +3,6 @@ class MessagesController < ApplicationController
   
   def outbox
     @messages = Message.outbox(current_user).page(params[:page]).per(5)
-    respond_to do |format|
-      format.html
-      format.json { render json: @messages }
-    end
   end
   
   def edit
@@ -54,18 +50,10 @@ class MessagesController < ApplicationController
   
   def inbox
     @messages = Message.inbox(current_user).page(params[:page]).per(5)
-    respond_to do |format|
-      format.html 
-      format.json { render json: @messages }
-    end
   end
  
   def drafts
     @messages = Message.drafts(current_user).page(params[:page]).per(5)
-    respond_to do |format|
-      format.html
-      format.json { render json: @messages }
-    end
   end
   
   def downloads
@@ -151,20 +139,11 @@ class MessagesController < ApplicationController
     end  
     @message = Message.new
     @message.assets.build
-    respond_to do |format|
-      format.html
-      format.json { render json: @messages }
-    end
   end
 
   def new
     @message = Message.new
     @message.assets.build
-    
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @message }
-    end
   end
 
   def create_receivers(array_of_users,message,received)
