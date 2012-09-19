@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-  autocomplete :user, :name
+   autocomplete :user, :name
   
   def outbox
     @messages = Message.outbox(current_user).page(params[:page]).per(5)
@@ -83,7 +83,7 @@ class MessagesController < ApplicationController
   
   def reply
     @message = Message.new(params[:message])
-    @message.sender = User.find session[:user_id]
+    @message.sender = current_user
     @message.parent_id = session[:message_id]
     parentmessage = Message.find @message.parent_id
     parentmessage.touch
@@ -130,12 +130,11 @@ class MessagesController < ApplicationController
     end
     if parentmessage.sender_id == session[:user_id]
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
-       @messages = Message.showing_to_sender(parentmessage,parentmessage.sender)#.page(params[:page]).per(2)
+       @messages = Message.showing_to_sender(parentmessage,parentmessage.sender)
     
     else
-       receiver_user = User.find session[:user_id]
-       @receiver=receiver_user.name
-       @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,receiver_user)#.page(params[:page]).per(2)
+       @receiver = current_user.name
+       @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,current_user)
     end  
     @message = Message.new
     @message.assets.build
@@ -182,7 +181,7 @@ class MessagesController < ApplicationController
       count = 1
       array_of_user=params[:message][:sender_id].split(";")
       @message = Message.new(params[:message])
-      @message.sender = User.find session[:user_id]
+      @message.sender = current_user
       @message.content = params[:message][:content]
       @message.subject = params[:message][:subject]
       @message.save
