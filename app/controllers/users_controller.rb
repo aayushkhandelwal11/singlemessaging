@@ -62,7 +62,6 @@ class UsersController < ApplicationController
       else
         flash[:error] = "Something went wrong "
         format.html { render action: "change_notification" }
-        format.json { render json: current_user.errors, status: :unprocessable_entity }
       end
     end  
   end
@@ -73,8 +72,7 @@ class UsersController < ApplicationController
         format.html { redirect_to inbox_path , notice: "User #{current_user.name} was successfully updated." }
       else
         flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
-        format.html { redirect_to request.referrer}
-        format.json { render json: current_user.errors, status: :unprocessable_entity }    
+        format.html { redirect_to request.referrer}   
       end
     end  
   end
