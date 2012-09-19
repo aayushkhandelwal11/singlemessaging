@@ -28,13 +28,8 @@ class UsersController < ApplicationController
       count = 1 
    end   
    respond_to do |format|
-    if count == 1
-      flash[:notice] = 'A mail has been sent to you'
-      format.html { redirect_to request.referrer }
-    else
-      flash[:error] = "Your entry Doesn't match our record"
-      format.html { redirect_to request.referrer }
-    end
+     flash[:notice] = count == 1 ? 'A mail has been sent to you' : "Your entry Doesn't match our record"
+     format.html { redirect_to request.referrer }
    end 
   end
 
