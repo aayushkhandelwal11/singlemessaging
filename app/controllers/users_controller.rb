@@ -17,18 +17,14 @@ class UsersController < ApplicationController
   end
   
   def send_password
-   count = 0
-   if User.find_by_name_and_email(params[:user][:name],params[:user][:email])
-      @user = User.find_by_name params[:user][:name]
+   @user = User.find_by_name_and_email(params[:user][:name],params[:user][:email])
+   if @user
       pass = SecureRandom.urlsafe_base64(n=6)
-      @user.password = pass
-      @user.password_confirmation = pass
-      @user.save
+      @user.update_attributes({:password => pass})
       Notifier.send_password(@user,pass).deliver
-      count = 1 
    end   
    respond_to do |format|
-     flash[:notice] = count == 1 ? 'A mail has been sent to you' : "Your entry Doesn't match our record"
+     flash[:notice] = @user ? 'A mail has been sent to you' : "Your entry Doesn't match our record"
      format.html { redirect_to request.referrer }
    end 
   end
