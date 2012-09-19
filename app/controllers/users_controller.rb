@@ -72,18 +72,17 @@ class UsersController < ApplicationController
   end
 
   def update
-    respond_to do |format|
      if current_user.authenticate(params[:user][:old])
        params[:user].delete :old
        if current_user.update_attributes(params[:user])
-         format.html { redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated." }
+         redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated."
+         return
        else
          flash[:error] = "Password is empty or doesnt matches"
        end
      else
          flash[:error] = "Old password doesn't match"
      end
-     format.html { redirect_to edit_user_path(current_user.id)} 
+     redirect_to edit_user_path(current_user.id)
    end
-  end
 end
