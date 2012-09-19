@@ -63,14 +63,12 @@ class UsersController < ApplicationController
   end
   
   def update_picture
-    respond_to do |format|
-      if params[:user] && current_user.update_attributes({:avatar => params[:user][:avatar]})
-        format.html { redirect_to inbox_path , notice: "User #{current_user.name} was successfully updated." }
-      else
-        flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
-        format.html { redirect_to request.referrer}   
-      end
-    end  
+    if params[:user] && current_user.update_attributes({:avatar => params[:user][:avatar]})
+      redirect_to inbox_path , notice: "User #{current_user.name} was successfully updated." 
+    else
+      flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
+      redirect_to request.referrer   
+    end
   end
 
   def update
