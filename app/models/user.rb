@@ -3,8 +3,7 @@ class User < ActiveRecord::Base
   attr_accessible :password, :password_confirmation, :avatar, :notification
   attr_accessible :avatar_file_name, :avatar_content_type, :avatar_file_size, :avatar_updated_at
   
-  
-  has_many:messages, :dependent => :destroy
+  has_many :messages, :dependent => :destroy
   has_many :flag_messages, :dependent => :destroy
   has_many :receivers, :dependent => :destroy
   
