@@ -70,7 +70,6 @@ class UsersController < ApplicationController
     respond_to do |format|
       if params[:user] != nil && @user.update_attribute(:notification, params[:user][:notification])
         format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated" }
-        format.json { head :no_content }
       else
         flash[:error] = "Something went wrong "
         format.html { render action: "change_notification" }
@@ -85,15 +84,11 @@ class UsersController < ApplicationController
       if params[:user] && @user.update_attributes({:avatar => params[:user][:avatar]})
         format.html { redirect_to inbox_path , notice: "User #{@user.name} was successfully updated." }
         format.json { head :no_content }
-      elsif params[:user] == nil
-        flash[:error] = "Please update a photo" 
-        format.html { redirect_to request.referrer  }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      else 
-        flash[:error] = "Please update a photo of jpg/png type"
-        format.html { redirect_to request.referrer}
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+      else
+       flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
+       format.html { redirect_to request.referrer}
+       format.json { render json: @user.errors, status: :unprocessable_entity }    
+       end
     end  
   end
 
@@ -108,13 +103,11 @@ class UsersController < ApplicationController
          format.json { head :no_content }
        else
          flash[:error] = "Password is empty or doesnt matches"
-         format.html { redirect_to edit_user_path(@user.id), notice: "Password is less then 8 or doesn't matches confirmation"  }
-         format.json { render json: @user.errors, status: :unprocessable_entity }
        end
      else
          flash[:error] = "Old password doesn't match"
-         format.html { redirect_to edit_user_path(@user.id)} 
-     end  
+     end
+     format.html { redirect_to edit_user_path(@user.id)} 
    end
   end
 end
