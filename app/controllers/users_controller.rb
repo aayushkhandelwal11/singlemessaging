@@ -78,12 +78,11 @@ class UsersController < ApplicationController
     respond_to do |format|
       if params[:user] && @user.update_attributes({:avatar => params[:user][:avatar]})
         format.html { redirect_to inbox_path , notice: "User #{@user.name} was successfully updated." }
-        format.json { head :no_content }
       else
-       flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
-       format.html { redirect_to request.referrer}
-       format.json { render json: @user.errors, status: :unprocessable_entity }    
-       end
+        flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
+        format.html { redirect_to request.referrer}
+        format.json { render json: @user.errors, status: :unprocessable_entity }    
+      end
     end  
   end
 
@@ -95,7 +94,6 @@ class UsersController < ApplicationController
        @user.password_confirmation = params[:user][:password_confirmation]
        if @user.save
          format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated." }
-         format.json { head :no_content }
        else
          flash[:error] = "Password is empty or doesnt matches"
        end
