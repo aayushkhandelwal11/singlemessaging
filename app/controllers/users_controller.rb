@@ -5,11 +5,11 @@ class UsersController < ApplicationController
   autocomplete :user, :name
    
   def change_avatar
-    @user = User.find(session[:user_id])
+    @user = current_user
   end
   
   def change_notification
-    @user = User.find(session[:user_id])
+    @user = current_user
   end
   
   def user_verify
@@ -61,46 +61,43 @@ class UsersController < ApplicationController
   end
 
   def update_notification
-    @user = User.find(session[:user_id])
     respond_to do |format|
-      if params[:user] != nil && @user.update_attribute(:notification, params[:user][:notification])
-        format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated" }
+      if params[:user] != nil && current_user.update_attribute(:notification, params[:user][:notification])
+        format.html { redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated" }
       else
         flash[:error] = "Something went wrong "
         format.html { render action: "change_notification" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+        format.json { render json: current_user.errors, status: :unprocessable_entity }
       end
     end  
   end
   
   def update_picture
-    @user = User.find(session[:user_id])
     respond_to do |format|
-      if params[:user] && @user.update_attributes({:avatar => params[:user][:avatar]})
-        format.html { redirect_to inbox_path , notice: "User #{@user.name} was successfully updated." }
+      if params[:user] && current_user.update_attributes({:avatar => params[:user][:avatar]})
+        format.html { redirect_to inbox_path , notice: "User #{current_user.name} was successfully updated." }
       else
         flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
         format.html { redirect_to request.referrer}
-        format.json { render json: @user.errors, status: :unprocessable_entity }    
+        format.json { render json: current_user.errors, status: :unprocessable_entity }    
       end
     end  
   end
 
   def update
-    @user = User.find(session[:user_id])
     respond_to do |format|
-     if @user.authenticate(params[:user][:old])
-       @user.password = params[:user][:password]
-       @user.password_confirmation = params[:user][:password_confirmation]
-       if @user.save
-         format.html { redirect_to inbox_path, notice: "User #{@user.name} was successfully updated." }
+     if current_user.authenticate(params[:user][:old])
+       current_user.password = params[:user][:password]
+       current_user.password_confirmation = params[:user][:password_confirmation]
+       if current_user.save
+         format.html { redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated." }
        else
          flash[:error] = "Password is empty or doesnt matches"
        end
      else
          flash[:error] = "Old password doesn't match"
      end
-     format.html { redirect_to edit_user_path(@user.id)} 
+     format.html { redirect_to edit_user_path(current_user.id)} 
    end
   end
 end

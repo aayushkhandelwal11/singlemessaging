@@ -2,8 +2,7 @@ class MessagesController < ApplicationController
   autocomplete :user, :name
   
   def outbox
-    user=User.find(session[:user_id])
-    @messages = Message.outbox(user).page(params[:page]).per(5)
+    @messages = Message.outbox(current_user).page(params[:page]).per(5)
     respond_to do |format|
       format.html
       format.json { render json: @messages }
@@ -54,10 +53,7 @@ class MessagesController < ApplicationController
   end
   
   def inbox
-    
-    user=User.find(session[:user_id])
-    @messages = Message.inbox(user).page(params[:page]).per(5)
-     
+    @messages = Message.inbox(current_user).page(params[:page]).per(5)
     respond_to do |format|
       format.html 
       format.json { render json: @messages }
@@ -65,8 +61,7 @@ class MessagesController < ApplicationController
   end
  
   def drafts
-    user=User.find(session[:user_id])
-    @messages = Message.drafts(user).page(params[:page]).per(5)
+    @messages = Message.drafts(current_user).page(params[:page]).per(5)
     respond_to do |format|
       format.html
       format.json { render json: @messages }
