@@ -7,9 +7,12 @@ class Message < ActiveRecord::Base
   has_many :receivers, :dependent => :destroy
   belongs_to :parent, :class_name => "Message", :foreign_key => "parent_id"
   has_many :flag_messages, :dependent => :destroy
+  
+
   MESSAGE_STATUS = { "Draft" => 0,"BothDelete" => 4, "AvailableBoth"=>1,"SenderDelete" => 2,
            "ReceiverDelete" => 3          
          }
+  
   
   accepts_nested_attributes_for :assets , :reject_if => lambda {|a| a[:document].blank? }
   

@@ -4,7 +4,7 @@
 <%= paginate @messages %>
 <table WIDTH="90%" id="center">
   <tr>
-    <th></th>
+    <th><%= check_box_tag :checkall %></th>
     <th>Content</th>
     <th> Date</th>
     <th>Edit</th>

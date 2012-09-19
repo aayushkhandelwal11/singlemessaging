@@ -131,7 +131,7 @@ class MessagesController < ApplicationController
   
   def show
     message = Message.find (params[:id])  
-     
+
     parentmessage = Message.find message.parent_id
     session[:message_id] = parentmessage.id
     @sender = parentmessage.sender.name
@@ -278,12 +278,13 @@ class MessagesController < ApplicationController
          if receiver.status == Message::MESSAGE_STATUS["Draft"]
             message.destroy
             break;        
+         elsif receiver.user_id == message.sender_id || receiver.status == Message::MESSAGE_STATUS["ReceiverDelete"]
+             receiver.status = Message::MESSAGE_STATUS["BothDelete"]
+             receiver.save   
          elsif receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]
              receiver.status = Message::MESSAGE_STATUS["SenderDelete"]
              receiver.save
-         elsif receiver.status == Message::MESSAGE_STATUS["ReceiverDelete"]
-             receiver.status = Message::MESSAGE_STATUS["BothDelete"]
-             receiver.save
+      
          end
        end          
     else
