@@ -115,11 +115,8 @@ class MessagesController < ApplicationController
     create_receivers(array_of_user,@message,"reply")
     respond_to do |format|
        if @message.save
-         if params[:commit] != "send"
-            format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
-         else
-            format.html { redirect_to inbox_path, notice: "Message was Sent " }
-         end
+         flash[:notice] = params[:commit] != "send" ? 'Message was Saved in drafts' : "Message was Sent " 
+         format.html { redirect_to inbox_path }
          format.json { render json: @message, status: :created, location: @message }
        else
          flash[:error] = 'Something went wrong '
@@ -131,7 +128,11 @@ class MessagesController < ApplicationController
   
   def show
     message = Message.find (params[:id])  
-
+    if !(message.sender_id == session[:user_id]) && !(message.receivers.exists?( :user_id => session[:user_id])) 
+       flash[:error] = "you are not authorized to view this "
+       redirect_to inbox_url 
+       return
+    end  
     parentmessage = Message.find message.parent_id
     session[:message_id] = parentmessage.id
     @sender = parentmessage.sender.name
@@ -170,6 +171,7 @@ class MessagesController < ApplicationController
       format.json { render json: @message }
     end
   end
+
   def create_receivers(array_of_users,message,received)
     count =0
     array_of_users.each do |num|
@@ -218,35 +220,26 @@ class MessagesController < ApplicationController
         if wrong_users > 0
           flash[:alert]= "#{wrong_users} of the recipeients doesn't exists"
         end
-        if params[:commit] != "send"
-            format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
-        else
-            format.html { redirect_to inbox_path, notice: "Message was Sent " }
-        end
+        flash[:notice] = params[:commit] != "send" ? 'Message was Saved in drafts' : "Message was Sent "
+        format.html { redirect_to inbox_path }
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0
          @message = Message.new(params[:message])
-        if params[:message][:subject].length < 1
-          
-          flash.now[:error] = 'Subject is empty'
-          format.html { render action: "new" }
-        else
-
-          flash.now[:error] = 'Mention atleast one recepent'
-          format.html { render action: "new" }
-        end  
-        format.json { render json: @message.errors, status: :unprocessable_entity }
+         flash.now[:error] = params[:message][:subject].length < 1 ? 'Subject is empty' : 'Mention atleast one recepent'
+         format.html { render action: "new" }
+         format.json { render json: @message.errors, status: :unprocessable_entity }
       elsif @message.receivers.count == 0
          @message.destroy
          @message = Message.new(params[:message])
          flash.now[:error] = 'Invalid receiver'
          format.html { render action: "new" }
       else
-        format.html { render action: "new" }
-        format.json { render json: @message.errors, status: :unprocessable_entity }
+         format.html { render action: "new" }
+         format.json { render json: @message.errors, status: :unprocessable_entity }
       end
     end
   end
+  
   def index_delete
      @messages = Message.find(params[:message_ids])
      @messages.each do |message|
@@ -258,9 +251,10 @@ class MessagesController < ApplicationController
      end  
      respond_to do |format|
        format.html { redirect_to request.referrer,:notice => "Selected Messages Deleted"}
-       format.json { head :no_content }
      end
   end 
+  
+
   def show_delete
      @messages = Message.find(params[:message_ids])
      @messages.each do |message|
@@ -268,9 +262,9 @@ class MessagesController < ApplicationController
      end  
      respond_to do |format|
        format.html { redirect_to request.referrer,:notice => "Selected Messages Deleted"}
-       format.json { head :no_content }
      end
-  end  
+  end
+
   def update_receivers(message)
     if message.sender_id == session[:user_id]
        receivers=Receiver.find_all_by_message_id(message.id)
@@ -297,12 +291,12 @@ class MessagesController < ApplicationController
       receiver.save          
     end
   end  
+  
   def destroy
     @message = Message.find(params[:id])
     update_receivers(@message)
     respond_to do |format|
       format.html { redirect_to request.referrer }
-      format.json { head :no_content }
     end
   end
 end
