@@ -14,14 +14,14 @@
    <% @messages.each do |message| %>
      <tr class="read">
      <% for receiver in message.receivers %>
-          <% if receiver.user_id == session[:user_id] && !receiver.read %>
+          <% if receiver.user_id.to_s == session[:user_id].to_s && !receiver.read %>
                <tr class="unread">
           <%end%>
      <%end%>  
      <td><%= check_box_tag "message_ids[]", message.id %></td>
      <td colspan >  <%= message.sender.name %></td>
      <td colspan > 
-        <% if message.sender_id == session[:user_id] %>
+        <% if message.sender_id.to_s == session[:user_id].to_s %>
           <% r=""%>
           <%for receiver in message.receivers %>
              <% r += receiver.user.name + ", "  %>

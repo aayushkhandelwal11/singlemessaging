@@ -2,12 +2,12 @@ class MessagesController < ApplicationController
    autocomplete :user, :name
   
   def outbox
-    @messages = Message.outbox(current_user).page(params[:page]).per(5)
+    @messages = Message.outbox(current_user).page(params[:page]).per(10)
   end
   
   def edit
     @message = Message.includes(:receivers).find(params[:id])
-    if @message.sender_id != session[:user_id]
+    if @message.sender != current_user
        flash[:notice]= 'You are not authorized for this' 
        redirect_to inbox_path
     end
@@ -22,7 +22,7 @@ class MessagesController < ApplicationController
   
   def send_draft
     @message = Message.find(session[:edit_message])
-    if @message.sender_id != session[:user_id]
+    if @message.sender != current_user
        flash[:notice]= 'You are not authorized for this' 
        redirect_to inbox_path 
     end
@@ -49,11 +49,11 @@ class MessagesController < ApplicationController
   end
   
   def inbox
-    @messages = Message.inbox(current_user).page(params[:page]).per(5)
+    @messages = Message.inbox(current_user).page(params[:page]).per(10)
   end
  
   def drafts
-    @messages = Message.drafts(current_user).page(params[:page]).per(5)
+    @messages = Message.drafts(current_user).page(params[:page]).per(10)
   end
   
   def downloads
@@ -64,9 +64,9 @@ class MessagesController < ApplicationController
   def flag
     @message = Message.find session[:message_id]
     count = 0 
-    if ! FlagMessage.find_by_user_id_and_message_id(session[:user_id], @message.id)
+    if ! FlagMessage.find_by_user_id_and_message_id(current_user.id, @message.id)
       count = 1
-      FlagMessage.create(:user_id => session[:user_id], :message_id => @message.id)
+      FlagMessage.create(:user_id => current_user.id, :message_id => @message.id)
     end
     respond_to do |format|
      if  count == 1
@@ -90,7 +90,7 @@ class MessagesController < ApplicationController
     @message.subject=parentmessage.subject
     @message.save
     array_of_user = []
-    if parentmessage.sender_id != session[:user_id]
+    if parentmessage.sender != current_user
        array_of_user = [parentmessage.sender_id]
     else
        array_of_user = Receiver.find_all_by_message_id(session[:message_id]).collect(&:user_id)
@@ -111,7 +111,7 @@ class MessagesController < ApplicationController
   
   def show
     message = Message.find (params[:id])  
-    if !(message.sender_id == session[:user_id]) && !(message.receivers.exists?( :user_id => session[:user_id])) 
+    if !(message.sender_id == current_user.id) && !(message.receivers.exists?( :user_id => current_user.id)) 
        flash[:error] = "you are not authorized to view this "
        redirect_to inbox_url 
        return
@@ -121,14 +121,14 @@ class MessagesController < ApplicationController
     @sender = parentmessage.sender.name
     @subject=parentmessage.subject
     # changing the read 
-    @receivers = message.receivers.find_all_by_user_id(session[:user_id])
+    @receivers = message.receivers.find_all_by_user_id(current_user)
     @receivers.each do |receiver|
       if receiver.message.parent_id == parentmessage.parent_id 
         receiver.read = true;
         receiver.save
       end
     end
-    if parentmessage.sender_id == session[:user_id]
+    if parentmessage.sender == current_user
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
        @messages = Message.showing_to_sender(parentmessage,parentmessage.sender)
     
@@ -239,7 +239,7 @@ class MessagesController < ApplicationController
   end
 
   def update_receivers(message)
-    if message.sender_id == session[:user_id]
+    if message.sender == current_user
        receivers=Receiver.find_all_by_message_id(message.id)
          receivers.each do |receiver|
          if receiver.status == Message::MESSAGE_STATUS["Draft"]
@@ -255,7 +255,7 @@ class MessagesController < ApplicationController
          end
        end          
     else
-      receiver=Receiver.find_by_message_id_and_user_id(message.id,session[:user_id])
+      receiver=Receiver.find_by_message_id_and_user_id(message.id,current_user.id)
       if receiver.status == Message::MESSAGE_STATUS["AvailableBoth"]
           receiver.status = Message::MESSAGE_STATUS["ReceiverDelete"]
       elsif receiver.status == Message::MESSAGE_STATUS["SenderDelete"]
