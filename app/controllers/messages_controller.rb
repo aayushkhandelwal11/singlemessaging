@@ -1,6 +1,6 @@
 class MessagesController < ApplicationController
-   autocomplete :user, :name
-  
+ 
+  autocomplete :user, :name, :display_value => :funky_method
   def outbox
     @messages = Message.outbox(current_user).page(params[:page]).per(10)
   end
@@ -156,7 +156,7 @@ class MessagesController < ApplicationController
         @receiver.status = Message::MESSAGE_STATUS["Draft"]
       end   
       if received != "reply"
-        @receiver.user = User.find_by_name(num)
+        @receiver.user = User.find_by_email(num)
       else
         @receiver.user = User.find(num) 
       end  
@@ -173,13 +173,17 @@ class MessagesController < ApplicationController
   end
 
   def create
-    array_of_id = [] 
+    array_of_user = [] 
     count = 0
     wrong_users=0
 
     if params[:message][:sender_id].length > 1 && params[:message][:subject].length > 1
       count = 1
-      array_of_user=params[:message][:sender_id].split(";")
+      temporary = params[:message][:sender_id].split(">;")
+      temporary.each do |val|
+        array_of_user << val.split('<')[1]
+      end
+      array_of_user.uniq!
       @message = Message.new(params[:message])
       @message.sender = current_user
       @message.content = params[:message][:content]

@@ -2,12 +2,15 @@ class UsersController < ApplicationController
 
   skip_before_filter :authorize, only: [:create,:new,:user_verify,:send_password]
   
-  autocomplete :user, :name
+  autocomplete :user, :name, :display_value => :funky_method
+ 
    
   def change_avatar
     @user = current_user
   end
-  
+  def change_time_zone
+    @user = current_user
+  end
   def change_notification
     @user = current_user
   end
@@ -54,6 +57,17 @@ class UsersController < ApplicationController
   def update_notification
     respond_to do |format|
       if params[:user] != nil && current_user.update_attribute(:notification, params[:user][:notification])
+        format.html { redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated" }
+      else
+        flash[:error] = "Something went wrong "
+        format.html { render action: "change_notification" }
+      end
+    end  
+  end
+
+  def update_time_zone
+    respond_to do |format|
+      if params[:user] != nil && current_user.update_attribute(:time_zone, params[:user][:time_zone])
         format.html { redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated" }
       else
         flash[:error] = "Something went wrong "

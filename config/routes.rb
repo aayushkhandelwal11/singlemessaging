@@ -1,5 +1,12 @@
 Singlemessaging::Application.routes.draw do
 
+  match '/auth/:provider/callback' => 'authentication#create'
+  get "authentication/index"
+  get "authentication/fill_email"
+  post "authentication/change_email"
+  get "authentication/create"
+
+  get "authentication/destroy"
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"
@@ -22,8 +29,10 @@ Singlemessaging::Application.routes.draw do
   end 
 
   resources :users, :except => [:destroy, :show, :index] do
-     get :autocomplete_user_name,:on => :collection
+     get :autocomplete_user_name, :on => :collection
     collection do   
+      get :change_time_zone 
+      put :update_time_zone 
       get :change_avatar 
       put :update_picture
       get :change_notification 

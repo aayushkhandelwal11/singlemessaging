@@ -32,7 +32,11 @@ gem "nested_form", :git => 'git://github.com/ryanb/nested_form.git'
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
 
-
+gem 'omniauth-twitter'
+gem 'omniauth-facebook'
+gem 'omniauth-linkedin'
+gem 'omniauth-yahoo'
+gem 'omniauth-google-oauth2'
 
 # To use debugger
 # gem 'debugger'

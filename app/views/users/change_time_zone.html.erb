@@ -1,0 +1,14 @@
+<h1>Update Time Zone</h1>
+<div class="depot_form">
+  <%= form_for @user,:html => { :multipart => true}  ,:url => update_time_zone_users_path do |f| %>
+  <fieldset>
+    <legend>Update TimeZone</legend>
+    <br><br>&nbsp;&nbsp;&nbsp;&nbsp;
+    <%= f.label :time_zone,'Time Zone'%>  <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all.sort,:default => "New Delhi" %>
+    <div>
+      <%= f.submit %>
+    </div>
+  </fieldset>
+<% end %>
+</div>
+

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120912045846) do
+ActiveRecord::Schema.define(:version => 20120920113631) do
 
   create_table "assets", :force => true do |t|
     t.datetime "created_at",            :null => false
@@ -21,6 +21,14 @@ ActiveRecord::Schema.define(:version => 20120912045846) do
     t.integer  "document_file_size"
     t.datetime "document_updated_at"
     t.integer  "message_id"
+  end
+
+  create_table "authentications", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "provider"
+    t.string   "uid"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "flag_messages", :force => true do |t|

@@ -3,8 +3,8 @@
   <%= form_for @user,:html => { :multipart => true}  ,:url => update_notification_users_path do |f| %>
   <fieldset>
     <legend>Update Notification</legend>
-    <br><br>&nbsp;&nbsp;&nbsp;&nbsp;
-    <%= f.check_box :notification %> Check To receive notifications from site
+    <br><br>
+    <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all.sort,:default => "New Delhi" %>
     <div>
       <%= f.submit %>
     </div>
