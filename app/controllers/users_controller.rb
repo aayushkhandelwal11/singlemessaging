@@ -52,27 +52,29 @@ class UsersController < ApplicationController
       end
     end
   end
+  
+  def succesful_updation
+     flash[:notice] = "User #{current_user.name} was successfully updated"
+     redirect_to inbox_path 
+  end  
 
   def update_notification
-    respond_to do |format|
-      current_user.update_attribute(:notification, params[:user][:notification])
-      format.html { redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated" }
-    end  
+    current_user.update_attribute(:notification, params[:user][:notification])
+    succesful_updation
+    
   end
 
   def update_time_zone
-    respond_to do |format|
-      current_user.update_attribute(:time_zone, params[:user][:time_zone])
-      format.html { redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated" }
-    end  
+     current_user.update_attribute(:time_zone, params[:user][:time_zone])
+     succesful_updation
   end
   
   def update_picture
     if params[:user] && current_user.update_attributes({:avatar => params[:user][:avatar]})
-      redirect_to inbox_path , notice: "User #{current_user.name} was successfully updated." 
+       succesful_updation
     else
-      flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
-      redirect_to request.referrer   
+       flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
+       redirect_to request.referrer   
     end
   end
 
@@ -80,7 +82,7 @@ class UsersController < ApplicationController
      if current_user.authenticate(params[:user][:old])
        params[:user].delete :old
        if current_user.update_attributes(params[:user])
-         redirect_to inbox_path, notice: "User #{current_user.name} was successfully updated."
+         succesful_updation
          return
        else
          flash[:error] = "Password is empty or doesnt matches"

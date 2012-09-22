@@ -15,11 +15,10 @@ class AuthenticationController < ApplicationController
      	if !authentication
            current_user.authentications.create!(:provider => omniauth['provider'], :uid => omniauth['uid'])
            flash[:notice] = "Authentication successful"
-           redirect_to authentication_index_url
         else
            flash[:error] = "Already linked"
-           redirect_to authentication_index_url
-        end 	
+        end
+         redirect_to authentication_index_url 	
      else
        user = User.new
        user.apply_omniauth(omniauth)
