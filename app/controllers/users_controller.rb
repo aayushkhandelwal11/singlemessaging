@@ -2,7 +2,7 @@ class UsersController < ApplicationController
 
   skip_before_filter :authorize, only: [:create,:new,:user_verify,:send_password]
   
-  autocomplete :user, :name, :display_value => :funky_method
+  autocomplete :user, :name, :display_value => :name_with_email
  
    
   def change_avatar
@@ -44,7 +44,6 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     respond_to do |format|
       if @user.save
-        Notifier.welcome_message(@user).deliver
         flash[:notice]= "User #{@user.name} was successfully created."
         format.html { redirect_to login_path}
         format.json { render json: @user, status: :created, location: @user }

@@ -23,11 +23,12 @@ class User < ActiveRecord::Base
   
   has_secure_password 
   
-
+  after_save :welcome 
+  after_create :welcome
  
   scope :join_with_receiver, joins("as u inner join receivers as r on r.user_id = u.id")
   
-  def funky_method
+  def name_with_email
      user = User.find self.id
     "#{self.name}<#{user.email}>"
   end
@@ -36,13 +37,16 @@ class User < ActiveRecord::Base
   def apply_omniauth(omniauth)
     if omniauth['provider'] != 'twitter'
       self.email = omniauth['info']['email'] if email.blank?
-    else
-      #self.email = omniauth['extra']['user_info']['email']
     end  
     self.name  = omniauth['info']['name'] if name.blank?
     self.notification = "1"
     self.time_zone = "New Delhi"
+    self.password = self.password_confirmation = self.name
     authentications.build(:provider => omniauth['provider'], :uid => omniauth['uid']) 
   end
+
+  def welcome
+    Notifier.welcome_message(self).deliver
+  end  
 
 end

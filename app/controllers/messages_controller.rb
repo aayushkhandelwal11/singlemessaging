@@ -1,6 +1,6 @@
 class MessagesController < ApplicationController
  
-  autocomplete :user, :name, :display_value => :funky_method
+  autocomplete :user, :name, :display_value => :name_with_email
   def outbox
     @messages = Message.outbox(current_user).page(params[:page]).per(10)
   end
