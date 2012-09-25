@@ -1,6 +1,7 @@
 class MessagesController < ApplicationController
  
   autocomplete :user, :name, :display_value => :name_with_email
+  
   def outbox
     @messages = Message.outbox(current_user).page(params[:page]).per(10)
   end
@@ -38,6 +39,7 @@ class MessagesController < ApplicationController
       end 
       receiver.save
     end
+
     respond_to do |format| 
       if params[:commit] != "send"
         format.html { redirect_to inbox_path, notice: 'Message was Saved in drafts' }
@@ -46,6 +48,7 @@ class MessagesController < ApplicationController
       end
       format.json { render json: @message, status: :created, location: @message }
     end
+
   end
   
   def inbox
@@ -109,6 +112,7 @@ class MessagesController < ApplicationController
     end
   end
   
+
   def show
     message = Message.find (params[:id])  
     if !(message.sender_id == current_user.id) && !(message.receivers.exists?( :user_id => current_user.id)) 
@@ -121,13 +125,10 @@ class MessagesController < ApplicationController
     @sender = parentmessage.sender.name
     @subject=parentmessage.subject
     # changing the read 
+
     @receivers = message.receivers.find_all_by_user_id(current_user)
-    @receivers.each do |receiver|
-      if receiver.message.parent_id == parentmessage.parent_id 
-        receiver.read = true;
-        receiver.save
-      end
-    end
+    @recivers.update_all(:read => true)
+ 
     if parentmessage.sender == current_user
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
        @messages = Message.showing_to_sender(parentmessage,parentmessage.sender)
@@ -186,8 +187,6 @@ class MessagesController < ApplicationController
       array_of_user.uniq!
       @message = Message.new(params[:message])
       @message.sender = current_user
-      @message.content = params[:message][:content]
-      @message.subject = params[:message][:subject]
       @message.save
       @message.update_attribute(:parent_id , @message.id)
       wrong_users=create_receivers(array_of_user, @message, "create")
@@ -217,6 +216,7 @@ class MessagesController < ApplicationController
     end
   end
   
+
   def index_delete
      @messages = Message.find(params[:message_ids])
      @messages.each do |message|

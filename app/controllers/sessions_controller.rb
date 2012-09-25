@@ -1,4 +1,4 @@
-class SessionsController < ApplicationController
+ class SessionsController < ApplicationController
   skip_before_filter :authorize
   def new
  
@@ -27,3 +27,4 @@ class SessionsController < ApplicationController
     redirect_to login_path, notice: "Logged out"
   end
 end
+

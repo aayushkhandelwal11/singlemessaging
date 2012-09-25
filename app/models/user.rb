@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   
   has_secure_password 
   
-  after_save :welcome 
+
   after_create :welcome
  
   scope :join_with_receiver, joins("as u inner join receivers as r on r.user_id = u.id")
