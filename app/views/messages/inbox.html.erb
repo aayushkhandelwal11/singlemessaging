@@ -1,3 +1,10 @@
 <h1>INBOX</h1>
+<%= form_tag inbox_path, :method => :get do %>
+  <p id ="search">
+    <%= search_field_tag :search, params[:search],:placeholder => "Enter search term.." %>
+    <%= submit_tag "Search"%>
+  </p>
+<% end %>
+
 <%= render "main" %>
 

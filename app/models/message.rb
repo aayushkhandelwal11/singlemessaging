@@ -9,6 +9,17 @@ class Message < ActiveRecord::Base
   has_many :flag_messages, :dependent => :destroy
   
 
+  define_index do
+    indexes subject, :sortable => true
+    indexes content
+    indexes sender(:name), :as => :sender
+    #indexes author(:name), :as => :author, :sortable => true
+
+    has  created_at, updated_at
+  end
+
+  validates :sender_id, :presence=> true
+
   MESSAGE_STATUS = { "Draft" => 0,"BothDelete" => 4, "AvailableBoth"=>1,"SenderDelete" => 2,
            "ReceiverDelete" => 3          
          }
@@ -16,8 +27,11 @@ class Message < ActiveRecord::Base
   
   accepts_nested_attributes_for :assets , :reject_if => lambda {|a| a[:document].blank? }
   
+    sphinx_scope(:inbox) { |user|
+     includes(:sender, :receivers).listing.sent.where("r.user_id =? and r.status in (1,2)",user.id).join_with_receiver.group("parent_id") 
+  }
+
   
-  validates :sender_id, :presence=> true
   scope :inbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("r.user_id =? and r.status in (1,2)",user.id).join_with_receiver.group("parent_id") }
    
   scope :outbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("sender_id =? and r.status in (1,3)",user.id).join_with_receiver.group("parent_id") }

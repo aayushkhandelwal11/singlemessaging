@@ -1,0 +1,14 @@
+development:
+   port: 9312
+   morphology: stem_en
+   enable_star: true
+   min_infix_len: 2
+
+test:
+   port: 9313
+
+production:
+   port: 9314
+   morphology: stem_en
+   enable_star: true
+   min_infix_len: 2

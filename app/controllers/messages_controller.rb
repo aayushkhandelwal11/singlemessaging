@@ -3,6 +3,8 @@ class MessagesController < ApplicationController
   autocomplete :user, :name, :display_value => :name_with_email
   
   def outbox
+    flash[:notice] = params
+    #@messages = Message.outbox(current_user).search params[:search] 
     @messages = Message.outbox(current_user).page(params[:page]).per(10)
   end
   
@@ -52,6 +54,8 @@ class MessagesController < ApplicationController
   end
   
   def inbox
+    flash[:notice] = params
+    #@messages = Message.inbox(current_user).search params[:search] 
     @messages = Message.inbox(current_user).page(params[:page]).per(10)
   end
  
@@ -123,12 +127,10 @@ class MessagesController < ApplicationController
     parentmessage = Message.find message.parent_id
     session[:message_id] = parentmessage.id
     @sender = parentmessage.sender.name
-    @subject=parentmessage.subject
+    @subject = parentmessage.subject
     # changing the read 
 
-    @receivers = message.receivers.find_all_by_user_id(current_user)
-    @recivers.update_all(:read => true)
- 
+    message.receivers.where("user_id = ?",current_user.id).update_all(:read => true)
     if parentmessage.sender == current_user
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
        @messages = Message.showing_to_sender(parentmessage,parentmessage.sender)
@@ -164,10 +166,10 @@ class MessagesController < ApplicationController
         @receiver.message = message
       if @receiver.user == nil
          count+=1
-      elsif  @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
-        if @receiver.user.notification == "1"
-          Notifier.gmail_message(message.sender,@receiver.user,message_url(message.id)).deliver   
-        end
+      # elsif  @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
+      #   if @receiver.user.notification == "1"
+      #     Notifier.delay.gmail_message(message.sender,@receiver.user,message_url(message.id))   
+      #   end
       end  
     end
     count    
@@ -176,8 +178,8 @@ class MessagesController < ApplicationController
   def create
     array_of_user = [] 
     count = 0
-    wrong_users=0
-
+    wrong_users = 0
+    @message = Message.new(params[:message])
     if params[:message][:sender_id].length > 1 && params[:message][:subject].length > 1
       count = 1
       temporary = params[:message][:sender_id].split(">;")
@@ -185,12 +187,13 @@ class MessagesController < ApplicationController
         array_of_user << val.split('<')[1]
       end
       array_of_user.uniq!
-      @message = Message.new(params[:message])
+      
       @message.sender = current_user
       @message.save
       @message.update_attribute(:parent_id , @message.id)
       wrong_users=create_receivers(array_of_user, @message, "create")
     end  
+    
     respond_to do |format|
       if  count == 1 && @message.save && @message.receivers.count != 0
         if wrong_users > 0
@@ -200,7 +203,6 @@ class MessagesController < ApplicationController
         format.html { redirect_to inbox_path }
         format.json { render json: @message, status: :created, location: @message }
       elsif count == 0
-         @message = Message.new(params[:message])
          flash.now[:error] = params[:message][:subject].length < 1 ? 'Subject is empty' : 'Mention atleast one recepent'
          format.html { render action: "new" }
          format.json { render json: @message.errors, status: :unprocessable_entity }

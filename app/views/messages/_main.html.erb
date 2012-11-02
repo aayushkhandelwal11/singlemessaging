@@ -1,5 +1,7 @@
+
+
 <%= form_tag index_delete_messages_path,:method => :put do %>
-<%= paginate @messages %>
+<%#= paginate @messages %>
 <% if @messages.length > 0  %>
   <table WIDTH="90%" id="center">
     <tr>

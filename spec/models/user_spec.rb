@@ -1,7 +1,7 @@
 require 'spec_helper'
 module UserSpecHelper
   def valid_user_attributes
-    { :name => "aayush", :age=>22,
+    { :name => "aayush",
       :email => "aayush.khandelwal@vinsol.com",
       :password => "aayush11",
       :password_confirmation => "aayush11",
@@ -33,18 +33,6 @@ describe User do
   it "Valid Email"do
     @user.attributes = valid_user_attributes.only(:email)
     @user.should have(0).error_on(:email)
-  end
-  it "age is nill"do
-    @user.attributes = valid_user_attributes.except(:age)
-    @user.should have(2).error_on(:age)
-  end
-  it "age is not in range"do
-    @user.attributes = valid_user_attributes.with(:age => 100)
-    @user.should have(1).error_on(:age)
-  end
-  it "valid age "do
-    @user.attributes = valid_user_attributes.only(:age)
-    @user.should have(0).error_on(:age)
   end
   it "Invalid Password short of length "do
     @user.attributes = valid_user_attributes.with(:password=>"wer")
