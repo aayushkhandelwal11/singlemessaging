@@ -27,16 +27,16 @@ class Message < ActiveRecord::Base
   
   accepts_nested_attributes_for :assets , :reject_if => lambda {|a| a[:document].blank? }
   
-    sphinx_scope(:inbox) { |user|
-     includes(:sender, :receivers).listing.sent.where("r.user_id =? and r.status in (1,2)",user.id).join_with_receiver.group("parent_id") 
-  }
+  #   sphinx_scope(:inbox) { |user|
+  #    includes(:sender, :receivers).listing.sent.where("r.user_id =? and r.status in (1,2)",user.id).join_with_receiver.group("parent_id") 
+  # }
 
   
   scope :inbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("r.user_id =? and r.status in (1,2)",user.id).join_with_receiver.group("parent_id") }
    
-  scope :outbox, lambda{ |user| includes(:sender, :receivers).listing.sent.where("sender_id =? and r.status in (1,3)",user.id).join_with_receiver.group("parent_id") }
+  scope :outbox, lambda{ |user| includes(:sender, :receivers => :user).listing.sent.where("sender_id =? and r.status in (1,3)",user.id).join_with_receiver.group("parent_id") }
   
-  scope :drafts, lambda{ |user| includes(:sender, :receivers).listing.where("sender_id = ? and r.status = ?", user.id, MESSAGE_STATUS["Draft"]).join_with_receiver.group("parent_id") }
+  scope :drafts, lambda{ |user| listing.where("sender_id = ? and r.status = ?", user.id, MESSAGE_STATUS["Draft"]).join_with_receiver.group("parent_id") }
   
   scope :showing_to_sender, lambda { |parentmessage, owner| includes(:sender, :assets).showing.where("(parent_id =?) and (( sender_id = ? and status in (1, 3)) or (sender_id != ? and status in (1, 2)))",parentmessage.id, owner.id, owner.id ).join_with_receiver.group("messages.id")
  }

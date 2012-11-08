@@ -3,8 +3,6 @@ class MessagesController < ApplicationController
   autocomplete :user, :name, :display_value => :name_with_email
   
   def outbox
-    flash[:notice] = params
-    #@messages = Message.outbox(current_user).search params[:search] 
     @messages = Message.outbox(current_user).page(params[:page]).per(10)
   end
   
@@ -15,12 +13,11 @@ class MessagesController < ApplicationController
        redirect_to inbox_path
     end
     session[:edit_message] = params[:id]
-    @receivers = ""
+    @receivers = []
     @message.receivers.each do |receiver|
-      @receivers = @receivers + receiver.user.name + ", "
+      @receivers << receiver.user.name
     end
-    @receivers=@receivers[0..-3]
-    
+    @receivers = @receivers.join(', ') 
   end
   
   def send_draft
@@ -31,7 +28,6 @@ class MessagesController < ApplicationController
     end
     @message.content = params[:message][:content]
     @message.created_at=Time.now
-    @message.updated_at=Time.now
     @message.save
     @message.receivers.each do |receiver|
       if params[:commit] == "send"
@@ -54,7 +50,6 @@ class MessagesController < ApplicationController
   end
   
   def inbox
-    flash[:notice] = params
     #@messages = Message.inbox(current_user).search params[:search] 
     @messages = Message.inbox(current_user).page(params[:page]).per(10)
   end
@@ -160,12 +155,16 @@ class MessagesController < ApplicationController
       end   
       if received != "reply"
         @receiver.user = User.find_by_email(num)
+        
       else
         @receiver.user = User.find(num) 
       end  
         @receiver.message = message
+        
       if @receiver.user == nil
          count+=1
+      else
+         @receiver.save
       # elsif  @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
       #   if @receiver.user.notification == "1"
       #     Notifier.delay.gmail_message(message.sender,@receiver.user,message_url(message.id))   
@@ -222,8 +221,7 @@ class MessagesController < ApplicationController
   def index_delete
      @messages = Message.find(params[:message_ids])
      @messages.each do |message|
-        childmessages = Message.find_all_by_parent_id(message.parent_id) 
-        
+        childmessages = Message.find_all_by_parent_id(message.parent_id)   
         childmessages.each do |childmessage|
          update_receivers(childmessage)
         end

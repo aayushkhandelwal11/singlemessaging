@@ -27,6 +27,7 @@ Singlemessaging::Application.routes.draw do
       put :send_draft  
     end 
   end 
+  
 
   resources :users, :except => [:destroy, :show, :index] do
      get :autocomplete_user_name, :on => :collection

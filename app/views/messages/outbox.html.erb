@@ -1,9 +1,4 @@
 <h1>OUTBOX</h1>
-<%= form_tag outbox_messages_path, :method => :get do %>
-  <p id ="search">
-    <%= search_field_tag :search, params[:search],:placeholder => "Enter search term.." %>
-    <%= submit_tag "Search"%>
-  </p>
-<% end %>
+
 <%= render "main" %>
 

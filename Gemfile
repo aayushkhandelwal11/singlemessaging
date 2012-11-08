@@ -34,3 +34,4 @@ gem 'delayed_job_active_record'
 gem "rails3-jquery-autocomplete", "~> 1.0.7"
 gem 'paperclip', :git => 'git://github.com/thoughtbot/paperclip.git'
 gem 'kaminari'
+gem 'bullet', group: :development

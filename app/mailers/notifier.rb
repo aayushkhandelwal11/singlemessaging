@@ -1,11 +1,6 @@
 class Notifier < ActionMailer::Base
-  default from: "Messaging App<aayush81047626it@gmail.com>"
+  #default from: "Messaging App<aayush81047626it@gmail.com>"
 
-  # Subject can be set in your I18n file at config/locales/en.yml
-  # with the following lookup:
-  #
-  #   en.notifier.gmail_message.subject
-  #
   def gmail_message(user1,user,url)
     @greeting = "Hi"
     @path= url
