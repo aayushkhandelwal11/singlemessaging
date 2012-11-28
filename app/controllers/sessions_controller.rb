@@ -1,5 +1,6 @@
  class SessionsController < ApplicationController
   skip_before_filter :authorize
+  skip_before_filter :authorize_through_json
   def new
  
   end
@@ -20,6 +21,11 @@
       redirect_to login_path 
     end
   end
+
+  def set_locale
+    session[:locale] = params[:locale]
+    redirect_to :back
+  end  
 
   def destroy
     cookies.delete(:user_id)

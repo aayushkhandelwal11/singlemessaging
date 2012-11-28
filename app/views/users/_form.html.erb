@@ -1,7 +1,7 @@
 <div class="depot_form">
   <%= form_for @user,:html => { :multipart => true}  do |f| %>
     <fieldset>
-      <legend>Enter User Details</legend>
+      <legend><%= t :enter_details, :scope => [:users, :new] %></legend>
       <table>
         <tr>
           <td><%= f.label :name %></td>
@@ -37,9 +37,9 @@
           <td>&nbsp;&nbsp;<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all.sort,:default => "New Delhi" %></td>
        </tr>  
      </table>
-     <br><br>&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box :notification %> Check To receive notifications from site
+     <br><br>&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box :notification %>  <%= t('users.new.notification_receive') %>
      <div>
-       <%= f.submit %>
+       <%= f.submit t('users.new.submit') %>
      </div>
    </fieldset>
   <% end %>

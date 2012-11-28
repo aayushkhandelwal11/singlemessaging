@@ -1,0 +1,63 @@
+hi:
+  activerecord:
+    models:
+      user: उपयोगकर्ता
+    attributes:
+      user:
+        name: नाम
+        last_name: अंतिम नाम 
+        password: पासवर्ड 
+        age: आयु
+        avatar: अवतार
+        password_confirmation: पासवर्ड पुनः 
+        email: ईमेल पता
+
+  errors:
+      messages:
+        inclusion:
+        confirmation: "अपने पुष्ठीकरन के बराबर होना चाहिए"
+        too_short: "न्यूनतम %{count} अक्षर का होना चाहिए"
+        taken: "अद्वितीय होना चाहिए"
+        blank: "डालना अनिवार्य हैं"
+        not_a_number: नंबर नहीं
+        invalid: अमान्य 
+      template:
+        header:
+          one:   "१ गलती इस %{model} को बन्ने से रोक रही हैं "
+          other: "%{count} गलतियां इस %{model} को बन्ने से रोक रही हैं"
+
+  layouts:
+    application:
+      log_in: प्रवेश करे
+      guest: अतिथि
+      list_your_place: अपनी जगह दर्ज करे
+      log_out: बाहर प्रवेश करे
+      welcome: स्वागत
+      new_user: नए उपयोगकर्ता
+      forgot_password: पासवर्ड भूल गए
+      home: मुख पृष्ठ
+      english: अंग्रेज़ी
+      hindi: हिंदी
+      vinsol_messenger: विनसोल मैसेंजर
+
+
+  users:
+    new:
+      new_user: नए उपयोगकर्ता
+      name: नाम 
+      enter_details: उपयोगकर्ता विवरण दर्ज करें
+      password: पासवर्ड
+      confirm_password: पासवर्ड पुनः डाले 
+      email_address: ईमेल पता
+      submit: उपयोगकर्ता बनाएं
+      notification_receive: साइट से सूचनाएं प्राप्त करने के लिए
+  sessions:
+    new:
+      password: पासवर्ड 
+      name: नाम  
+      remember : याद रखें
+      log_in: प्रवेश करे
+      please_log_in: कृपया प्रवेश करे
+      forgot_your_password: अपना पासवर्ड भूल गए
+      email: ईमेल पता
+

@@ -1,5 +1,9 @@
 Singlemessaging::Application.routes.draw do
 
+  resources :oauths, :only => [:destroy, :index] do
+     get :generate, :on => :collection
+  end
+
   match '/auth/:provider/callback' => 'authentication#create'
   get "authentication/index"
   get "authentication/fill_email"
@@ -10,6 +14,7 @@ Singlemessaging::Application.routes.draw do
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"
+  get "sessions/set_locale"
 
   match "/inbox" => "messages#inbox", :as =>"inbox", :via =>"get"
   match "/reply" => "messages#reply", :as =>"reply", :via =>"post"

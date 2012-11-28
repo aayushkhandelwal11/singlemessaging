@@ -2,5 +2,40 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
-  
+
+  layouts:
+    application:
+      log_in: Log in
+      sign_up: Sign up
+      guest: Guest
+      list_your_place: List Your Place
+      places: Places
+      log_out: Log Out
+      welcome: Welcome
+      new_user: New User
+      forgot_password: Forgot Password
+      home: Home
+      english: English
+      hindi: Hindi
+
+      vinsol_messenger: Vinsol Messenger
+  users:
+    new:
+      new_user: New User
+      enter_details: Enter User Details
+      name: Name 
+      password: Password 
+      confirm_password: Confirm Password 
+      email_address: Email Address
+      submit: Create User 
+      notification_receive: Check To receive notifications from site
+
+  sessions:
+    new:
+      name: Name
+      password: Password 
+      please_log_in: Please Log In
+      log_in: Log In
+      email: Email
+      remember : Remember me
+

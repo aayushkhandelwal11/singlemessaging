@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   has_many :flag_messages, :dependent => :destroy
   has_many :receivers, :dependent => :destroy
   has_many :authentications
-  
+  has_many :oauths
   
   
   validates_attachment_size :avatar, :less_than=>1.megabyte, :message => "Image size too large"

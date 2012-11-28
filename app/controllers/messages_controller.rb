@@ -1,7 +1,8 @@
 class MessagesController < ApplicationController
  
+  skip_before_filter :authorize_through_json, :except => [:inbox, :destroy]
   autocomplete :user, :name, :display_value => :name_with_email
-  
+
   def outbox
     @messages = Message.outbox(current_user).page(params[:page]).per(10)
   end
@@ -52,6 +53,10 @@ class MessagesController < ApplicationController
   def inbox
     #@messages = Message.inbox(current_user).search params[:search] 
     @messages = Message.inbox(current_user).page(params[:page]).per(10)
+    respond_to do |format|
+      format.html 
+      format.json { render json: @messages }
+    end
   end
  
   def drafts
@@ -274,6 +279,7 @@ class MessagesController < ApplicationController
     update_receivers(@message)
     respond_to do |format|
       format.html { redirect_to request.referrer }
+      format.json { head :no_content }
     end
   end
 end

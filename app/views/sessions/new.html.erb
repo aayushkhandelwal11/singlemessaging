@@ -1,15 +1,15 @@
 <div class="depot_form">
    <%= form_tag('/sessions/create',:method => :get) do %>
-    <fieldset>
-      <legend>Please Log In</legend>
+     <fieldset>
+      <legend><%= t('.please_log_in') %></legend>
 
       <table>
         <tr>
-          <td><%= label_tag :email, 'Email:' %></td>
+          <td><%= label_tag :email, t('.email') %></td>
           <td><%= email_field :email, params[:email] %></td>
         </tr>
         <tr>
-          <td><%= label_tag :password, 'Password:' %></td>
+          <td><%= label_tag :password, t('.password') %></td>
           <td><%= password_field_tag :password, params[:password] , size: 30%></td>
         </tr>
 
@@ -17,12 +17,11 @@
       <div class="field">
 
         <%= check_box_tag :remember_me, 1, params[:remember_me] %>
-               &nbsp;&nbsp; <%= label_tag :remember_me %>
+              <%= label_tag t('.remember') %>
       </div>
-      <%= submit_tag "Login", :class => "create" %>
+      <%= submit_tag t('.log_in') , :class => "create" %>
       </div>
     </fieldset>
   <% end %>
-
 <p><strong>Sign in through one of these services:</strong></p>
 <%= render 'authentication/list' %>

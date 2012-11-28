@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <th colspan ='2'>User</th>
+  </tr>
+
+<% @oauths.each do |oauth| %>
+  <tr >
+    <td> <%= oauth.token %></td>
+    <td> <%= User.find(session[:user_id]).name %>
+  </tr>
+<% end %>
+</table>

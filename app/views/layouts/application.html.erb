@@ -13,13 +13,13 @@
 
   <div id="banner">
     <%= image_tag("vinsol.jpg") %>
-    <%= @page_title || "Vinsol Messenger" %>
-   <div id="user"> Welcome
+    <%= @page_title || t('.vinsol_messenger') %>
+   <div id="user">  <%= t('.welcome') %>
    <% if session[:user_id]!=nil %> 
    <%= (User.find session[:user_id]).name%>
    <h3><%= link_to 'Log Out',logout_path,:method=>:delete%></h3>
    <%else%>
-   Guest
+    <%= t('.guest') %>
    <%end%>
    </div>
   </div>
@@ -27,9 +27,11 @@
     <div id="side">
       <ul>
         <% if session[:user_id]==nil %> 
-        <li><%= link_to 'New user', new_user_path %></li>
-        <li><%= link_to 'Home', login_path %></li>
-        <li><%= link_to 'Forgot Password', user_verify_users_path %></li>
+        <li><%= link_to t('.new_user'), new_user_path %></li>
+        <li><%= link_to t('.home'), login_path %></li>
+        <li><%= link_to t('.forgot_password'), user_verify_users_path %></li>
+        <li><%= link_to t('.english'), sessions_set_locale_path(:locale => :en) %></li>
+        <li><%= link_to t('.hindi'), sessions_set_locale_path(:locale => :hi) %></li>
         <% else %>
         <% if (User.find session[:user_id]).avatar.exists? %>
           <%= image_tag (User.find session[:user_id]).avatar.url(:small) %>
@@ -41,6 +43,8 @@
         <li><%= link_to 'Outbox', outbox_messages_path %></li>
         <li><%= link_to 'Drafts',  drafts_messages_path%></li>
         <li><%= link_to 'Update Avatar', change_avatar_users_path%></li>
+        <li><%= link_to 'Create token', generate_oauths_path %></li>
+        <li><%= link_to 'Show tokens', oauths_path %></li>
         <li><%= link_to 'Update Notifications', change_notification_users_path%></li>
         <li><%= link_to 'Update Timezone', change_time_zone_users_path%></li>
         <li><%= link_to 'Link more accounts', authentication_index_url %></li>

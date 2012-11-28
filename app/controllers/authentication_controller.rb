@@ -1,7 +1,7 @@
 class AuthenticationController < ApplicationController
   
   skip_before_filter :authorize , :except => [:index, :destroy]
-  
+  skip_before_filter :authorize_through_json
   def index
     @authentications = current_user.authentications 
   end
