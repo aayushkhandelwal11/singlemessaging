@@ -1,4 +1,4 @@
 <h1>INBOX</h1>
-
+<% cache("inbox_#{current_user.id}_#{@messages.first.updated_at}") do %>
 <%= render "main" %>
-
+<% end %>

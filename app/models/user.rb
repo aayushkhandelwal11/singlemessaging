@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   
   validates_attachment_size :avatar, :less_than=>1.megabyte, :message => "Image size too large"
   validates_attachment_content_type :avatar, :content_type=>['image/jpeg', 'image/png', 'image/gif', 'image/jpg'], :message => "Please upload a image of jpg/png format"
-  validates :name, :presence => true,:length => { :minimum => 3,:tokenizer => lambda {|str| str.scan(/[a-z]/i)},:message => "Minimum 3 alphabets should be their "}
+  validates :name, :presence => true,:length => { :minimum => 3,:tokenizer => lambda {|str| str.scan(/[a-z]/i)}}
   validates :email, :uniqueness => {:case_sensitive => false}, :presence => true 
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create
   validates :age, :numericality => {:only_integer => true ,:greater_than => 0 , :less_than => 100 },:allow_nil => true

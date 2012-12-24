@@ -1,10 +1,15 @@
 class UsersController < ApplicationController
 
-  skip_before_filter :authorize, only: [:create,:new,:user_verify,:send_password]
+  skip_before_filter :authorize, only: [:create, :new, :user_verify, :send_password]
   skip_before_filter :authorize_through_json
+  before_filter :check_user_not_loggedin, :only => [:user_verify]
 
   autocomplete :user, :name, :display_value => :name_with_email
- 
+  
+
+
+  caches_action :user_verify, :layout => false
+
 
   def change_avatar
     @user = current_user
@@ -60,7 +65,7 @@ class UsersController < ApplicationController
   end  
 
   def update_notification
-    current_user.update_attribute(:notification, params[:user][:notification])
+    current_user.update_attribute(:notification, params[:notification])
     succesful_updation
     
   end
@@ -74,7 +79,6 @@ class UsersController < ApplicationController
     if params[:user] && current_user.update_attributes({:avatar => params[:user][:avatar]})
        succesful_updation
     else
-       expires_action :change_avatar
        flash[:error] = params[:user] == nil ? "Please update a photo" : "Please update a photo of jpg/png type"
        redirect_to request.referrer   
     end

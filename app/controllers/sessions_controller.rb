@@ -1,10 +1,18 @@
  class SessionsController < ApplicationController
   skip_before_filter :authorize
   skip_before_filter :authorize_through_json
-  def new
- 
-  end
+  
+  caches_page :faq
+  before_filter :check_user_not_loggedin, :only => [:new]
 
+  def new
+    respond_to do |format|
+      format.html 
+      format.json { render :text => "Need to log in"  }
+    end
+  end
+  def faq
+  end
   def create
     user = User.find_by_email(params[:email])
     if user && user.authenticate(params[:password])
@@ -17,15 +25,12 @@
       url = inbox_path if url.eql?('/logout')
       redirect_to(url)
     else
-     flash[:error]= "Invalid email/password combination"
+     #flash[:error] = "Invalid email/password combination"
+     flash[:error] = t('flash.error.invalid_log_in')
       redirect_to login_path 
     end
   end
 
-  def set_locale
-    session[:locale] = params[:locale]
-    redirect_to :back
-  end  
 
   def destroy
     cookies.delete(:user_id)

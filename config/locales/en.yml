@@ -2,7 +2,7 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-
+  verify: Verify 
   layouts:
     application:
       log_in: Log in
@@ -17,7 +17,7 @@ en:
       home: Home
       english: English
       hindi: Hindi
-
+      faq: FAQ
       vinsol_messenger: Vinsol Messenger
   users:
     new:
@@ -35,7 +35,12 @@ en:
       name: Name
       password: Password 
       please_log_in: Please Log In
+      social_sign: Sign in through one of these services
       log_in: Log In
       email: Email
       remember : Remember me
-
+    faq:
+      description: This page is made for testing page caching
+  flash:
+    error:
+      invalid_log_in: "Invalid email/password combination"          

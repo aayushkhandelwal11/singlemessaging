@@ -6,12 +6,15 @@ task :delete_message => :environment do
     	message.destroy
     end
   end 
+
   parentmessages = Message.where('id = parent_id')
   parentmessages.each do |message|
     if Message.find_all_by_parent_id(message.id).count == 1
-      if ! message.receivers.exists?(:status => [0, 1, 2, 3] )
+      if !message.receivers.exists?(:status => [0, 1, 2, 3] )
        	message.destroy
       end
     end
   end
 end	
+
+

@@ -1,10 +1,11 @@
 class MessagesController < ApplicationController
  
-  skip_before_filter :authorize_through_json, :except => [:inbox, :destroy]
+  skip_before_filter :authorize_through_json, :except => [:inbox, :destroy, :create]
   autocomplete :user, :name, :display_value => :name_with_email
-
+  protect_from_forgery :except => :destroy
   def outbox
     @messages = Message.outbox(current_user).page(params[:page]).per(10)
+    
   end
   
   def edit
@@ -130,12 +131,16 @@ class MessagesController < ApplicationController
     @subject = parentmessage.subject
     # changing the read 
 
-    message.receivers.where("user_id = ?",current_user.id).update_all(:read => true)
+    if message.receivers.where("user_id = ?",current_user.id).where(:read => false).update_all(:read => true ) > 0 
+      flash.notice = "expired"
+      expire_fragment("inbox_#{current_user.id}_#{Message.inbox(current_user).first.updated_at}")
+    end
     if parentmessage.sender == current_user
        @receiver = User.select("u.name").where("r.message_id= ?",parentmessage.id).join_with_receiver.collect(&:name).join(', ')
        @messages = Message.showing_to_sender(parentmessage,parentmessage.sender)
     
     else
+
        @receiver = current_user.name
        @messages = Message.showing_to_receiver(parentmessage,parentmessage.sender,current_user)
     end  
@@ -170,16 +175,13 @@ class MessagesController < ApplicationController
          count+=1
       else
          @receiver.save
-      # elsif  @receiver.save && @receiver.status == Message::MESSAGE_STATUS["AvailableBoth"] 
-      #   if @receiver.user.notification == "1"
-      #     Notifier.delay.gmail_message(message.sender,@receiver.user,message_url(message.id))   
-      #   end
       end  
     end
     count    
   end
 
   def create
+
     array_of_user = [] 
     count = 0
     wrong_users = 0
@@ -195,7 +197,7 @@ class MessagesController < ApplicationController
       @message.sender = current_user
       @message.save
       @message.update_attribute(:parent_id , @message.id)
-      wrong_users=create_receivers(array_of_user, @message, "create")
+      wrong_users = create_receivers(array_of_user, @message, "create")
     end  
     
     respond_to do |format|
@@ -205,18 +207,19 @@ class MessagesController < ApplicationController
         end
         flash[:notice] = params[:commit] != "send" ? 'Message was Saved in drafts' : "Message was Sent "
         format.html { redirect_to inbox_path }
-        format.json { render json: @message, status: :created, location: @message }
+        format.json { render :text => flash[:notice] }
       elsif count == 0
          flash.now[:error] = params[:message][:subject].length < 1 ? 'Subject is empty' : 'Mention atleast one recepent'
          format.html { render action: "new" }
-         format.json { render json: @message.errors, status: :unprocessable_entity }
+         format.json { render :json => flash.now[:error], :status => 406 }
       elsif @message.receivers.count == 0
          @message.destroy
          @message = Message.new(params[:message])
          flash.now[:error] = 'Invalid receiver'
          format.html { render action: "new" }
+         format.json { render :json => flash.now[:error], :status => 406 }
       else
-         format.html { render action: "new" }
+         format.html { render :text => "something went wrong"  }
          format.json { render json: @message.errors, status: :unprocessable_entity }
       end
     end
@@ -225,7 +228,9 @@ class MessagesController < ApplicationController
 
   def index_delete
      @messages = Message.find(params[:message_ids])
+     expire_fragment("inbox_#{current_user.id}_#{Message.inbox(current_user).first.updated_at}")
      @messages.each do |message|
+
         childmessages = Message.find_all_by_parent_id(message.parent_id)   
         childmessages.each do |childmessage|
          update_receivers(childmessage)
@@ -278,6 +283,7 @@ class MessagesController < ApplicationController
     @message = Message.find(params[:id])
     update_receivers(@message)
     respond_to do |format|
+      expire_fragment("inbox_#{current_user.id}_#{Message.inbox(current_user).first.updated_at}")
       format.html { redirect_to request.referrer }
       format.json { head :no_content }
     end

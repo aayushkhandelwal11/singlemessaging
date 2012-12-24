@@ -5,45 +5,65 @@ class ApplicationController < ActionController::Base
   before_filter :set_prefered_language
   before_filter :set_user_time_zone
   helper_method :current_user
+
+
   private
 
   def set_user_time_zone
     Time.zone = User.find(session[:user_id]).time_zone if session[:user_id]
   end
-  
+
   protected
 
   def authorize
-    if cookies[:user_id] && session[:user_id] == nil 
+    if cookies[:user_id] && session[:user_id] == nil
       session[:user_id] = cookies[:user_id]
-    end  
+    end
     unless User.find_by_id(session[:user_id]) || User.find_by_id(cookies[:user_id])
       session[:return_to] = request.fullpath
       flash[:error] = "Please Log in"
       redirect_to login_url
     end
   end
+
+
   def authorize_through_json
     if params[:format] == "json"
-      if params[:token].present?
-        o = Oauth.find_by_token(params[:token]) 
-        if o
-          session[:user_id] = o.user_id
-          session[:expiry_time] = 10.seconds.from_now
-        else
-          respond_to do |format|
-            format.json { render :text => "error"  }
-          end 
-        end  
+
+      if params[:token].present? && Oauth.find_by_token(params[:token])
+        session[:user_id] = Oauth.find_by_token(params[:token]).user_id
+        session[:expiry_time] = 10.seconds.from_now
+      else
+        respond_to do |format|
+          #render :json => JSON.parse(" The param is not right"), :status => :unprocessable_entity
+           format.json { render :json => "Received params are not acceptable", :status => 406 } 
+        end
       end
-    end  
+    end
   end
+
+  def default_url_options(options={})
+    { :locale => I18n.locale }
+  end
+
   def current_user
     @current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
 
   def set_prefered_language
-    I18n.locale = session[:locale] || I18n.default_locale
+    if params[:locale]
+      I18n.locale = params[:locale]
+      session[:locale] = params[:locale]
+    else
+      I18n.locale = I18n.default_locale
+      I18n.locale = session[:locale] if session[:locale]
+    end
+  end
+
+  def check_user_not_loggedin
+    if current_user
+      redirect_to inbox_url and return
+    end
   end
 
 end
